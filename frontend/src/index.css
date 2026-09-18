@@ -1,1 +1,113 @@
+/* ────────────────────────────────────────────
+   Google Fonts – MUST be first @import rule
+   ──────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
+/* ────────────────────────────────────────────
+   Tailwind CSS v4
+   ──────────────────────────────────────────── */
+@import "tailwindcss";
+
+/* ────────────────────────────────────────────
+   ORIXA – Global Design Tokens
+   Tailwind CSS v4 uses @theme for custom tokens
+   ──────────────────────────────────────────── */
+@theme {
+  /* Fonts */
+  --font-sans: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+
+  /* Brand colour palette */
+  --color-orixa-navy:        #06142F;
+  --color-orixa-navy-mid:    #0A2145;
+  --color-orixa-navy-light:  #0D2E60;
+  --color-orixa-blue:        #0F3D8A;
+  --color-orixa-cyan:        #00D4FF;
+  --color-orixa-cyan-dim:    #00AACC;
+  --color-orixa-text:        #C8DEFF;
+  --color-orixa-muted:       #5A7AA0;
+  --color-orixa-border:      rgba(0, 180, 255, 0.18);
+  --color-orixa-glow:        rgba(0, 212, 255, 0.25);
+}
+
+/* ──────────────────────────────────────────────────────
+   Base resets
+   ────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  min-height: 100vh;
+}
+
+body {
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  background-color: #06142F;
+  color: #C8DEFF;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ──────────────────────────────────────────────────────
+   Sidebar — scrollbar suppression
+   ────────────────────────────────────────────────────── */
+.sidebar-scroll::-webkit-scrollbar {
+  display: none;
+}
+.sidebar-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ──────────────────────────────────────────────────────
+   Sidebar — outer right-edge glow
+   Kept subtle: small cyan right-side shadow only.
+   ────────────────────────────────────────────────────── */
+.sidebar-outer-glow {
+  box-shadow:
+    3px 0 20px -6px rgba(0, 200, 255, 0.10),
+    inset -1px 0 0 0 rgba(0, 160, 220, 0.12);
+}
+
+/* ──────────────────────────────────────────────────────
+   Logo orb — slow, very subtle pulse
+   Toned down from v1: longer period (5s), lower glow ceiling (0.50).
+   The goal is "alive" not "distracting".
+   ────────────────────────────────────────────────────── */
+@keyframes orb-pulse {
+  0%, 100% {
+    box-shadow: 0 0 6px 1px rgba(0, 212, 255, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 12px 4px rgba(0, 212, 255, 0.50);
+  }
+}
+.orb-pulse {
+  animation: orb-pulse 5s ease-in-out infinite;
+}
+
+/* ──────────────────────────────────────────────────────
+   Nav active background gradient
+   ────────────────────────────────────────────────────── */
+.nav-active-bg {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 72, 168, 0.65) 0%,
+    rgba(0, 160, 220, 0.14) 100%
+  );
+  box-shadow:
+    0 1px 10px rgba(0, 160, 220, 0.14),
+    inset 0 0 0 1px rgba(0, 200, 255, 0.10);
+}
+
+/* ──────────────────────────────────────────────────────
+   Focus ring — keyboard navigation
+   ────────────────────────────────────────────────────── */
+.nav-focus:focus-visible {
+  outline: 2px solid rgba(0, 212, 255, 0.80);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
