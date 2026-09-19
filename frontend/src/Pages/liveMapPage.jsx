@@ -9,11 +9,12 @@
  * • Map pins clickable
  */
 
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Bell, ChevronDown, MapPin, Bus, Train, Plane, Car,
-  ArrowRight, AlertTriangle, CheckCircle, Leaf, Compass, ShieldCheck, X, Menu
+  AlertTriangle, CheckCircle, Leaf, Compass, ShieldCheck, X,
+  MessageSquare, Send, Brain
 } from 'lucide-react';
 import AppLayout from '../components/user/AppLayout';
 import './HomePage.css';
@@ -21,15 +22,40 @@ import './LiveMapPage.css';
 
 export default function LiveMapPage() {
   const navigate  = useNavigate();
-  const location  = useLocation();
-  const { journey } = location.state || {};
+
 
   const [toggles, setToggles] = useState({ bus: false, train: true, air1: false, air2: false, roads: false });
   const [showChanges, setShowChanges] = useState(false);
   const [selectedPin, setSelectedPin] = useState(null);
   const [dismissed, setDismissed] = useState(false);
+  
+  // Smart Journey Assistant State
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState([
+      { id: 1, sender: 'ai', text: 'Hi Oshen! I am your Journey Assistant. How can I help?' }
+  ]);
+  const [chatInput, setChatInput] = useState('');
 
   const handleToggle = (key) => setToggles(prev => ({ ...prev, [key]: !prev[key] }));
+  
+  const handleChatSend = () => {
+      if(!chatInput.trim()) return;
+      
+      const newMsg = { id: Date.now(), sender: 'user', text: chatInput };
+      setChatMessages(prev => [...prev, newMsg]);
+      setChatInput('');
+      
+      // AI mock response
+      setTimeout(() => {
+          let responseText = "I'm monitoring your journey. Everything looks smooth!";
+          if (newMsg.text.toLowerCase().includes('delay')) {
+              responseText = "The 6 minute delay is due to high passenger density at Central Hub. We've rerouted you to minimize impact.";
+          } else if (newMsg.text.toLowerCase().includes('accessible') || newMsg.text.toLowerCase().includes('exit')) {
+              responseText = "For step-free access at KDU University, use Exit B where the main elevators are located.";
+          }
+          setChatMessages(prev => [...prev, { id: Date.now(), sender: 'ai', text: responseText }]);
+      }, 1000);
+  };
 
   return (
     <AppLayout>
@@ -261,9 +287,9 @@ export default function LiveMapPage() {
                   <div className="ts-dot" />
                 </div>
                 <div className="ts-labels" aria-hidden="true">
-                  <span>KDU</span>
-                  <span>to next stop</span>
-                  <span>Final Stop</span>
+                  <span>Departure</span>
+                  <span>En Route</span>
+                  <span>Arrival</span>
                 </div>
               </div>
             </div>
@@ -308,6 +334,55 @@ export default function LiveMapPage() {
 
           </div>
         </div>
+        
+        {/* ── SMART JOURNEY ASSISTANT ── */}
+        <div className={`smart-assistant-widget ${isAssistantOpen ? 'open' : ''}`}>
+            {!isAssistantOpen ? (
+                <button 
+                    className="sa-fab" 
+                    onClick={() => setIsAssistantOpen(true)}
+                    aria-label="Open Journey Assistant"
+                >
+                    <MessageSquare size={24} />
+                    <span className="sa-ping"></span>
+                </button>
+            ) : (
+                <div className="sa-panel">
+                    <div className="sa-header">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Brain size={20} color="#14E1FF"/> 
+                            <h4>Journey Assistant</h4>
+                        </div>
+                        <button className="sa-close" onClick={() => setIsAssistantOpen(false)} aria-label="Close Assistant">
+                            <X size={18} />
+                        </button>
+                    </div>
+                    <div className="sa-body">
+                        {chatMessages.map(msg => (
+                            <div key={msg.id} className={`sa-msg ${msg.sender}`}>
+                                {msg.text}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="sa-quick-replies">
+                        <button onClick={() => setChatInput("Why is there a delay?")}>Why is there a delay?</button>
+                        <button onClick={() => setChatInput("Find accessible exit")}>Find accessible exit</button>
+                    </div>
+                    <div className="sa-footer">
+                        <input 
+                            type="text" 
+                            placeholder="Ask a question..." 
+                            value={chatInput}
+                            onChange={e => setChatInput(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && handleChatSend()}
+                            aria-label="Ask assistant"
+                        />
+                        <button onClick={handleChatSend} aria-label="Send message"><Send size={16} /></button>
+                    </div>
+                </div>
+            )}
+        </div>
+        
       </div>
     </AppLayout>
   );

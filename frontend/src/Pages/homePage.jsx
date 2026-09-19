@@ -11,12 +11,13 @@
  * • AI Travel Assistant card
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Search, Mic, Calendar, ChevronDown, Bell, MapPin, Clock,
-  ArrowRight, ChevronRight, Bus, Train, Plane, Car, X,
-  AlertCircle, CheckCircle, LogOut, Settings, User as UserIcon
+  ArrowRight, ChevronRight, Bus, Train, Plane, Car, PlaneTakeoff,
+  AlertCircle, LogOut, Settings, User as UserIcon,
+  Accessibility, Check, Plus
 } from 'lucide-react';
 import AppLayout from '../components/user/AppLayout';
 import './HomePage.css';
@@ -38,8 +39,11 @@ export default function HomePage() {
   const navigate = useNavigate();
 
   const [activeTransport, setActiveTransport] = useState('bus');
+  const [origin, setOrigin]                   = useState('Current Location');
   const [destination, setDestination]         = useState('');
   const [arrivalTime, setArrivalTime]         = useState('08:00');
+  const [accessPrefs, setAccessPrefs]         = useState([]);
+  const [isSimpleMode, setIsSimpleMode]       = useState(false);
   const [validationMsg, setValidationMsg]     = useState('');
   const [isListening, setIsListening]         = useState(false);
   const [showNotifs, setShowNotifs]           = useState(false);
@@ -64,13 +68,31 @@ export default function HomePage() {
   /* ── Handlers ── */
   const handlePlan = () => {
     if (!destination.trim()) {
-      setValidationMsg('Please enter a destination to plan your journey.');
+      setValidationMsg('Please enter your destination.');
       document.getElementById('destInput')?.focus();
       return;
     }
+    
+    if (origin.trim().toLowerCase() === destination.trim().toLowerCase()) {
+      setValidationMsg('Your starting point and destination are the same.');
+      return;
+    }
+    
     setValidationMsg('');
     navigate('/journey', {
-      state: { destination: destination.trim(), transport: activeTransport, arrivalTime },
+      state: { destination, arrivalTime, origin, accessPrefs, activeTransport }
+    });
+  };
+
+  const toggleAccessPref = (pref) => {
+    setAccessPrefs(prev => 
+      prev.includes(pref) ? prev.filter(p => p !== pref) : [...prev, pref]
+    );
+  };
+
+  const openJourney = (dest) => {
+    navigate('/journey', {
+      state: { destination: dest, arrivalTime, origin, accessPrefs, activeTransport }
     });
   };
 
@@ -99,13 +121,11 @@ export default function HomePage() {
 
   const markAllRead = () => setNotifications(prev => prev.map(n => ({ ...n, read: true })));
 
-  const openJourney = (dest) => {
-    navigate('/journey', { state: { destination: dest, transport: activeTransport, arrivalTime } });
-  };
+
 
   return (
     <AppLayout>
-      <main className="main-content" aria-label="Home page content">
+      <main className={`main-content ${isSimpleMode ? 'simple-mode-active' : ''}`} aria-label="Home page content">
 
         {/* ── Background city image ── */}
         <div className="bg-image-container" aria-hidden="true">
@@ -204,6 +224,15 @@ export default function HomePage() {
 
               {/* Row 2: weather + status (hidden on small mobile) */}
               <div className="controls-row-2">
+                <button 
+                  className={`simple-mode-btn ${isSimpleMode ? 'active' : ''}`} 
+                  onClick={() => setIsSimpleMode(!isSimpleMode)}
+                  aria-pressed={isSimpleMode}
+                  aria-label="Toggle Simple Mode"
+                >
+                  <Accessibility size={16} /> 
+                  <span>{isSimpleMode ? 'Simple Mode: ON' : 'Simple Mode: OFF'}</span>
+                </button>
                 <div className="weather-pill" aria-label="Current weather: 28°C, Colombo">
                   <span className="weather-icon" aria-hidden="true">🌤️</span>
                   <div className="weather-text">
@@ -222,13 +251,27 @@ export default function HomePage() {
           {/* ══════════ SEARCH ══════════ */}
           <div className="search-container">
 
+            {/* Origin input */}
+            <div className={`search-bar search-origin ${validationMsg ? 'has-error' : ''}`} style={{ marginBottom: 12 }}>
+              <MapPin aria-hidden="true" size={20} color="#7994B6" />
+              <input
+                id="originInput"
+                type="text"
+                placeholder="Where from?"
+                value={origin}
+                onChange={(e) => { setOrigin(e.target.value); if (validationMsg) setValidationMsg(''); }}
+                aria-label="Origin"
+                autoComplete="off"
+              />
+            </div>
+
             {/* Destination input */}
             <div className={`search-bar ${validationMsg ? 'has-error' : ''}`}>
               <Search aria-hidden="true" />
               <input
                 id="destInput"
                 type="text"
-                placeholder="Search destination..."
+                placeholder="Where to?"
                 value={destination}
                 onChange={(e) => { setDestination(e.target.value); if (validationMsg) setValidationMsg(''); }}
                 onKeyDown={(e) => { if (e.key === 'Enter') handlePlan(); }}
@@ -294,23 +337,42 @@ export default function HomePage() {
           {/* ══════════ TRANSPORT MODE ══════════ */}
           <div className="transport-toggles" role="group" aria-label="Select transport mode">
             {[
-              { id: 'bus',   label: 'Bus',   Icon: Bus   },
-              { id: 'train', label: 'Train', Icon: Train },
-              { id: 'air',   label: 'Air',   Icon: Plane },
-              { id: 'roads', label: 'Roads', Icon: Car   },
-            ].map(({ id, label, Icon }) => (
+              { id: 'bus',       label: 'Bus',       Icon: Bus          },
+              { id: 'train',     label: 'Train',     Icon: Train        },
+              { id: 'air',       label: 'Air',       Icon: Plane        },
+              { id: 'roads',     label: 'Roads',     Icon: Car          },
+              { id: 'airtaxis',  label: 'Air Taxis', Icon: PlaneTakeoff },
+            ].map((t) => (
               <button
-                key={id}
+                key={t.id}
                 type="button"
-                className={`transport-btn ${activeTransport === id ? 'active' : ''}`}
-                onClick={() => setActiveTransport(id)}
-                aria-pressed={activeTransport === id}
-                aria-label={`${label} transport`}
+                className={`transport-btn ${activeTransport === t.id ? 'active' : ''}`}
+                onClick={() => setActiveTransport(t.id)}
+                aria-pressed={activeTransport === t.id}
+                aria-label={`Mode: ${t.label}`}
               >
-                <Icon aria-hidden="true" />
-                <span>{label}</span>
+                <t.Icon aria-hidden="true" />
+                <span>{t.label}</span>
               </button>
             ))}
+          </div>
+
+          {/* ══════════ ACCESSIBILITY PREFS ══════════ */}
+          <div className="access-prefs-container">
+            <h4 style={{ color: '#7994B6', fontSize: '13px', marginBottom: '8px' }}>Personalized Accessibility</h4>
+            <div className="access-toggles">
+                {['Wheelchair-friendly', 'Step-free', 'Low walking'].map(pref => (
+                    <button 
+                        key={pref} 
+                        type="button" 
+                        className={`access-btn ${accessPrefs.includes(pref) ? 'active' : ''}`}
+                        onClick={() => toggleAccessPref(pref)}
+                        aria-pressed={accessPrefs.includes(pref)}
+                    >
+                        {accessPrefs.includes(pref) ? <Check size={14}/> : <Plus size={14}/>} {pref}
+                    </button>
+                ))}
+            </div>
           </div>
 
           {/* ══════════ DASHBOARD CARDS ══════════ */}

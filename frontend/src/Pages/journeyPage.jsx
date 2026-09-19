@@ -13,14 +13,14 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import {
   ArrowLeft, Bell, ChevronDown, MapPin, Footprints, Bus, Train,
   ArrowRight, Shuffle, Armchair, Volume2, Type, CheckCircle2,
-  ChevronUp, ChevronRight, Clock, Zap, Leaf,
+  ChevronUp, ChevronRight, Clock, Leaf, AlertTriangle, Sparkles, Accessibility
 } from 'lucide-react';
 import AppLayout from '../components/user/AppLayout';
 import './HomePage.css';
 import './JourneyPage.css';
 
 /* ─── Mock route options ─── */
-const buildRoutes = (destination, transport) => [
+const buildRoutes = (destination) => [
   {
     id: 1,
     label: 'Recommended',
@@ -32,6 +32,7 @@ const buildRoutes = (destination, transport) => [
     duration: '42 min',
     transfers: '2 transfers',
     co2: 'Low impact',
+    aiContext: 'Recommended because it is 12 min faster and avoids current hyperloop congestion.',
     legs: [
       { type: 'walk',  label: 'Walk', duration: '4 min' },
       { type: 'bus',   label: 'Bus',  duration: '12 min' },
@@ -77,10 +78,10 @@ export default function JourneyPage() {
   const navigate  = useNavigate();
   const location  = useLocation();
 
-  const { destination = 'KDU University', transport = 'bus', arrivalTime = '08:00' } =
+  const { destination = 'KDU University', transport = 'bus', arrivalTime = '08:00', accessPrefs = [] } =
     location.state || {};
 
-  const routes = buildRoutes(destination, transport);
+  const routes = buildRoutes(destination);
 
   /* Two-step view: results → detail */
   const [selectedRoute, setSelectedRoute] = useState(null);
@@ -145,6 +146,17 @@ export default function JourneyPage() {
               </div>
             </div>
           </div>
+          
+          {/* Predictive Delay Alert */}
+          {transport === 'train' && (
+             <div className="predictive-delay-banner" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #EF4444', padding: '16px', borderRadius: '12px', margin: '24px 24px 0 24px', display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <AlertTriangle color="#EF4444" size={24} style={{ flexShrink: 0 }} />
+                <div>
+                   <h4 style={{ color: '#EF4444', margin: '0 0 4px 0', fontSize: '15px' }}>Possible Delay Detected</h4>
+                   <p style={{ margin: 0, fontSize: '13px', color: '#FCA5A5' }}>AI predicts a 15–20 minute delay on the Southern Express Line due to heavy passenger density. Alternative routes have been prioritized below.</p>
+                </div>
+             </div>
+          )}
 
           {/* ROUTE CARDS */}
           <div className="route-results-list">
@@ -190,6 +202,20 @@ export default function JourneyPage() {
                       );
                     })}
                   </div>
+                  
+                  {/* AI & Accessibility Context */}
+                  {route.aiContext && (
+                    <div className="ai-routing-context" style={{ padding: '12px 16px', background: 'rgba(20, 225, 255, 0.05)', borderTop: '1px solid rgba(20, 225, 255, 0.1)', borderBottom: '1px solid rgba(20, 225, 255, 0.1)', fontSize: '13px', color: '#8BADC1', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <Sparkles size={14} color="#14E1FF" style={{ flexShrink: 0 }} />
+                        <span><strong>AI Recommended:</strong> {route.aiContext}</span>
+                    </div>
+                  )}
+                  {accessPrefs.length > 0 && route.id === 1 && (
+                    <div className="access-routing-context" style={{ padding: '12px 16px', background: 'rgba(16, 185, 129, 0.05)', borderBottom: '1px solid rgba(16, 185, 129, 0.1)', fontSize: '13px', color: '#A7F3D0', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <Accessibility size={14} color="#10B981" style={{ flexShrink: 0 }} />
+                        <span>Accessible route selected because you prefer <strong>{accessPrefs.join(', ').toLowerCase()}</strong> travel.</span>
+                    </div>
+                  )}
 
                   <div className="rc-footer">
                     <span className="rc-meta">{route.transfers}</span>

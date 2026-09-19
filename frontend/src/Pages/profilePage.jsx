@@ -7,15 +7,15 @@
  * • Fully responsive via ProfilePage.css
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Search, Bell, ChevronDown, ArrowRight, Fingerprint,
   X, Train, MapPin, Zap, AlertCircle, Leaf, ShieldCheck,
-  Settings, Settings2, Sliders, LogOut, User as UserIcon,
-  CheckCircle, Eye, EyeOff, ToggleLeft, ToggleRight,
+  Settings, Sliders, LogOut, User as UserIcon,
+  Eye, ToggleLeft, ToggleRight,
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import AppLayout from '../components/user/AppLayout';
 import './HomePage.css';
 import './ProfilePage.css';
@@ -335,7 +335,7 @@ export default function ProfilePage() {
    SUB-TAB COMPONENTS
 ═══════════════════════════════════════════ */
 
-function OverviewTab({ vehicles, revokeVehicle, prefMode, setPrefMode }) {
+function OverviewTab({ vehicles, revokeVehicle, prefMode }) {
   return (
     <>
       {/* Auth cards */}
