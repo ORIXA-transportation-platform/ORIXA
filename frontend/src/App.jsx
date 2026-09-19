@@ -26,10 +26,10 @@ export default function App() {
 
         {/* ── Public Route (Standalone) ───────────────────────── */}
         <Route path="/home" element={<HomePage />} />
+        <Route path="/journey" element={<JourneyPage />} />
 
         {/* ── User / authenticated area (unified SideNavbar layout) ─ */}
         <Route element={<SideNavbar />}>
-          <Route path="/journey"  element={<JourneyPage />} />
           <Route path="/live-map" element={<LiveMapPage />} />
           <Route path="/profile"  element={<ProfilePage />} />
         </Route>

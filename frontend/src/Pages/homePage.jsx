@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Search, Mic, Calendar, ChevronDown, Bell, MapPin, Clock, ArrowRight, ChevronRight, Bus, Train, Plane, Car } from 'lucide-react';
 import './HomePage.css';
 
@@ -41,22 +42,22 @@ export default function HomePage() {
                 </div>
 
                 <nav className="nav-menu">
-                    <a href="#" className={`nav-item ${activeNav === 'home' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); setActiveNav('home'); }}>
+                    <Link to="/home" className={`nav-item ${activeNav === 'home' ? 'active' : ''}`} onClick={() => setActiveNav('home')}>
                         <svg viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path><path d="M9 21v-7h6v7"></path></svg>
                         <span>Home</span>
-                    </a>
-                    <a href="#" className={`nav-item ${activeNav === 'journey' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); setActiveNav('journey'); }}>
+                    </Link>
+                    <Link to="/journey" className={`nav-item ${activeNav === 'journey' ? 'active' : ''}`} onClick={() => setActiveNav('journey')}>
                         <svg viewBox="0 0 24 24"><circle cx="5" cy="19" r="2"></circle><circle cx="19" cy="5" r="2"></circle><path d="M7 19c6 0 4-10 10-14"></path></svg>
                         <span>Journey</span>
-                    </a>
-                    <a href="#" className={`nav-item ${activeNav === 'live-map' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); setActiveNav('live-map'); }}>
+                    </Link>
+                    <Link to="/live-map" className={`nav-item ${activeNav === 'live-map' ? 'active' : ''}`} onClick={() => setActiveNav('live-map')}>
                         <svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
                         <span>Live Map</span>
-                    </a>
-                    <a href="#" className={`nav-item ${activeNav === 'profile' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); setActiveNav('profile'); }}>
+                    </Link>
+                    <Link to="/profile" className={`nav-item ${activeNav === 'profile' ? 'active' : ''}`} onClick={() => setActiveNav('profile')}>
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c.8-4 3.5-6 8-6s7.2 2 8 6"></path></svg>
                         <span>Profile</span>
-                    </a>
+                    </Link>
                 </nav>
 
                 <div className="ai-assistant-mini">
