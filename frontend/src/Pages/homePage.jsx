@@ -37,8 +37,7 @@ export default function HomePage() {
             {/* SIDEBAR */}
             <aside className="sidebar">
                 <div className="brand">
-                    <div className="brand-icon"></div>
-                    <span>ORIXA</span>
+                    <img src="/images/logo.png" alt="ORIXA Logo" className="brand-icon-img" />
                 </div>
 
                 <nav className="nav-menu">

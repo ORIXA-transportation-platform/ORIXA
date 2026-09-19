@@ -44,27 +44,29 @@ body {
     font-weight: 700;
     letter-spacing: 2px;
     color: #FFF;
-    margin-bottom: 40px;
-    padding-left: 10px;
+    margin-bottom: 10px; /* Reduced to remove empty space */
+    padding-left: 0px;
 }
 
-.brand-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 3px solid #1BA3E1;
-    position: relative;
-    box-shadow: 0 0 12px rgba(27, 163, 225, 0.5);
+.brand-icon-img {
+    width: 170px;
+    height: auto;
+    margin-top: -20px; /* Pull up to cut transparent space */
+    margin-bottom: -10px; /* Pull down to cut transparent space */
+    object-fit: contain;
+    animation: shinyLogo 3s infinite ease-in-out;
 }
-.brand-icon::after {
-    content: '';
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: #25D9FF;
-    border-radius: 50%;
-    top: 0; left: 0; right: 0; bottom: 0;
-    margin: auto;
+
+@keyframes shinyLogo {
+    0% {
+        filter: drop-shadow(0 0 4px rgba(37, 217, 255, 0.3)) brightness(1);
+    }
+    50% {
+        filter: drop-shadow(0 0 16px rgba(37, 217, 255, 0.9)) brightness(1.3);
+    }
+    100% {
+        filter: drop-shadow(0 0 4px rgba(37, 217, 255, 0.3)) brightness(1);
+    }
 }
 
 .nav-menu {
