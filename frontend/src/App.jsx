@@ -24,9 +24,11 @@ export default function App() {
         {/* ── Redirect root to /home ───────────────────────────── */}
         <Route path="/" element={<Navigate to="/home" replace />} />
 
+        {/* ── Public Route (Standalone) ───────────────────────── */}
+        <Route path="/home" element={<HomePage />} />
+
         {/* ── User / authenticated area (unified SideNavbar layout) ─ */}
         <Route element={<SideNavbar />}>
-          <Route path="/home"     element={<HomePage />}    />
           <Route path="/journey"  element={<JourneyPage />} />
           <Route path="/live-map" element={<LiveMapPage />} />
           <Route path="/profile"  element={<ProfilePage />} />
