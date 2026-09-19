@@ -1,0 +1,522 @@
+/* =========================================================
+   LIVE MAP PAGE STYLES (Match reference image exactly)
+   ========================================================= */
+
+.map-page-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: #040A15;
+    overflow: hidden;
+}
+
+/* 3D Map Canvas Simulation Background */
+.map-canvas-bg {
+    position: absolute;
+    top: 0;
+    left: 250px; /* offset by sidebar */
+    right: 0;
+    bottom: 0;
+    background-image: url('/images/live_map_bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 1;
+}
+
+/* Subtle overlay to enhance contrast for UI */
+.map-canvas-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 30%, rgba(4, 10, 21, 0.4) 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* HUD Overlay Layer */
+.hud-layer {
+    position: absolute;
+    top: 0;
+    left: 250px;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none; /* Let clicks pass through */
+}
+
+/* =========================================================
+   HEADER HUD
+   ========================================================= */
+.map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: auto;
+}
+
+.map-title-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.back-btn-map {
+    background: transparent;
+    border: none;
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.map-title-row h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #FFF;
+    margin: 0;
+}
+
+.live-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #10B981;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 12px;
+}
+.live-dot {
+    width: 6px;
+    height: 6px;
+    background: #10B981;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #10B981;
+}
+
+.hud-top-right {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+/* =========================================================
+   LEFT MAP CONTROLS
+   ========================================================= */
+.map-controls-left {
+    position: absolute;
+    left: 24px;
+    top: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: auto;
+}
+
+.layer-toggles-container {
+    background: rgba(11, 20, 38, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(81, 210, 255, 0.15);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 4px;
+    width: 64px;
+}
+
+.map-control-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #7994B6;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 10px 0;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: 0.2s;
+}
+.map-control-btn:hover {
+    color: #FFF;
+}
+.map-control-btn.active {
+    color: #14E1FF;
+}
+
+.compass-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(11, 20, 38, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(81, 210, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFF;
+    cursor: pointer;
+    margin-left: 8px; /* align center with the 64px container */
+}
+
+/* =========================================================
+   RIGHT TELEMETRY COLUMN
+   ========================================================= */
+.telemetry-column {
+    position: absolute;
+    right: 24px;
+    top: 80px;
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    pointer-events: auto;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+}
+
+/* Remove scrollbar */
+.telemetry-column::-webkit-scrollbar { display: none; }
+
+.tele-card {
+    background: rgba(13, 24, 48, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(100, 150, 255, 0.15);
+    border-radius: 16px;
+    padding: 20px;
+}
+
+/* A. Journey Update (Purple) */
+.card-purple {
+    background: rgba(43, 25, 75, 0.85);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+}
+.ju-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+.ju-icon {
+    background: rgba(139, 92, 246, 0.2);
+    color: #C4B5FD;
+    padding: 10px;
+    border-radius: 50%;
+}
+.ju-text {
+    flex: 1;
+}
+.ju-text small {
+    display: block;
+    color: #A78BFA;
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+.ju-text h3 {
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+}
+.ju-text p {
+    color: #E2E8F0;
+    font-size: 12px;
+    margin: 0;
+}
+.ju-close {
+    color: #94A3B8;
+    cursor: pointer;
+}
+
+.ju-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 16px;
+}
+.ju-eta h4 {
+    color: #94A3B8;
+    font-size: 11px;
+    margin: 0 0 2px 0;
+    font-weight: 400;
+}
+.ju-eta-times {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+.ju-eta-times .new {
+    color: #FFF;
+    font-size: 20px;
+    font-weight: 600;
+}
+.ju-eta-times .old {
+    color: #64748B;
+    font-size: 12px;
+    text-decoration: line-through;
+}
+.ju-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+.badge-changes {
+    background: rgba(20, 225, 255, 0.15);
+    color: #14E1FF;
+    border: 1px solid rgba(20, 225, 255, 0.3);
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 10px;
+}
+.btn-view-changes {
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.5);
+    color: #FFF;
+    padding: 6px 16px;
+    border-radius: 16px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-view-changes:hover {
+    background: rgba(139, 92, 246, 0.4);
+}
+
+/* B. Train Telemetry */
+.train-header {
+    display: flex;
+    justify-content: space-between;
+}
+.th-left h3 {
+    color: #FFF;
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 6px 0;
+}
+.th-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #10B981;
+    font-size: 12px;
+}
+.th-right img {
+    width: 60px;
+    border-radius: 8px;
+}
+
+.train-mid {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 12px;
+}
+.tm-left small { color: #94A3B8; font-size: 11px; }
+.tm-left div { color: #FFF; font-size: 14px; font-weight: 500; margin-top: 2px; }
+.tm-right { color: #FFF; font-size: 18px; font-weight: 600; }
+
+.train-scrubber {
+    margin-top: 16px;
+}
+.ts-bar {
+    width: 100%;
+    height: 4px;
+    background: #1E293B;
+    border-radius: 2px;
+    position: relative;
+}
+.ts-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 40%;
+    background: #14E1FF;
+    border-radius: 2px;
+    box-shadow: 0 0 10px #14E1FF;
+}
+.ts-dot {
+    position: absolute;
+    left: 40%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background: #FFF;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #14E1FF;
+}
+.ts-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    color: #94A3B8;
+    font-size: 11px;
+}
+
+/* C. Journey Guardian */
+.guardian-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+.gh-title {
+    display: flex;
+    gap: 12px;
+}
+.gh-icon {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+    padding: 8px;
+    border-radius: 50%;
+}
+.gh-text h3 {
+    color: #FFF;
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 2px 0;
+}
+.gh-text p {
+    color: #94A3B8;
+    font-size: 12px;
+    margin: 0;
+}
+.gh-badge {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.check-list-g .c-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #E2E8F0;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+.check-list-g .c-item svg {
+    color: #10B981;
+}
+
+/* D. Journey Impact */
+.impact-header {
+    display: flex;
+    gap: 12px;
+}
+.impact-icon {
+    color: #10B981;
+}
+.impact-text p {
+    color: #94A3B8;
+    font-size: 12px;
+    margin: 0 0 2px 0;
+}
+.impact-text h2 {
+    color: #14E1FF;
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+}
+.impact-sub {
+    color: #E2E8F0;
+    font-size: 11px;
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+.impact-bar {
+    width: 100%;
+    height: 4px;
+    background: #1E293B;
+    border-radius: 2px;
+}
+.impact-fill {
+    width: 88%;
+    height: 100%;
+    background: #10B981;
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+/* =========================================================
+   MAP WAYPOINTS
+   ========================================================= */
+.map-pin {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(13, 24, 48, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(81, 210, 255, 0.2);
+    padding: 6px 12px;
+    border-radius: 20px;
+    color: #FFF;
+    font-size: 13px;
+    font-weight: 500;
+    pointer-events: auto;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+.map-pin .pin-icon-circle {
+    width: 24px;
+    height: 24px;
+    background: #FFF;
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.map-pin.train-pin .pin-icon-circle {
+    background: rgba(43, 25, 75, 0.8);
+    color: #FFF;
+}
+.map-pin.train-pin p {
+    margin: 0;
+}
+.map-pin.train-pin small {
+    display: block;
+    color: #94A3B8;
+    font-size: 10px;
+}
+
+/* Special "You are here" pin */
+.you-are-here-marker {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.orb-glow {
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle, #14E1FF 0%, transparent 70%);
+    border-radius: 50%;
+    animation: orbPulse 2s infinite alternate;
+}
+@keyframes orbPulse {
+    from { transform: scale(1); opacity: 0.8; }
+    to { transform: scale(1.5); opacity: 0.2; }
+}
+
+/* Image floating train pod */
+.floating-train-pod {
+    position: absolute;
+    width: 60px;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+}

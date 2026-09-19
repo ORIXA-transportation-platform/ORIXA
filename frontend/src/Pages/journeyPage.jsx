@@ -185,9 +185,26 @@ export default function JourneyPage() {
                         <div className="preview-card">
                             <h3>Journey Preview</h3>
                             <div className="schematic">
-                                <div className="sch-item"><div className="sch-icon"><Footprints size={16}/></div> <ChevronRight size={16} color="#6B8FB5"/></div>
-                                <div className="sch-item"><div className="sch-icon"><Bus size={16}/></div> <ChevronRight size={16} color="#6B8FB5"/></div>
-                                <div className="sch-item"><div className="sch-icon" style={{ background: '#1C153B', color: '#8B5CF6' }}><Train size={16}/></div></div>
+                                <div className="sch-step">
+                                    <div className="sch-icon"><Footprints size={16}/></div>
+                                    <span className="sch-label">Walk</span>
+                                </div>
+                                <div className="sch-connector">
+                                    <span className="sch-connector-line"></span>
+                                    <ChevronRight size={16} color="#6B8FB5"/>
+                                </div>
+                                <div className="sch-step">
+                                    <div className="sch-icon"><Bus size={16}/></div>
+                                    <span className="sch-label">Bus</span>
+                                </div>
+                                <div className="sch-connector">
+                                    <span className="sch-connector-line"></span>
+                                    <ChevronRight size={16} color="#6B8FB5"/>
+                                </div>
+                                <div className="sch-step">
+                                    <div className="sch-icon" style={{ background: '#1C153B', color: '#8B5CF6' }}><Train size={16}/></div>
+                                    <span className="sch-label">Rail</span>
+                                </div>
                             </div>
                             <div className="duration-matrix">
                                 <div className="d-item"><span>Walk</span><strong>4 min</strong></div>
