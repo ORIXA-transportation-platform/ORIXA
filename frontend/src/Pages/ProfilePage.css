@@ -461,3 +461,67 @@
     align-items: center;
     gap: 6px;
 }
+
+/* =========================================================
+   RESPONSIVE DESIGN
+   ========================================================= */
+@media (max-width: 1024px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+    }
+    .search-bar-container {
+        width: 100%;
+    }
+    .top-controls {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+    
+    .user-identity-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+    .kpi-strip {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    
+    .profile-sub-nav {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 8px;
+    }
+    
+    .auth-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-strip {
+        grid-template-columns: 1fr;
+    }
+    
+    .vehicle-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+    }
+    .vc-right {
+        justify-content: space-between;
+    }
+    
+    .goal-stat {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+}

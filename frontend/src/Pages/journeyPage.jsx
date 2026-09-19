@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Bell, ChevronDown, MapPin, Footprints, Bus, Train, ArrowRight, Shuffle, Armchair, Volume2, Type, CheckCircle2, ChevronUp, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Bell, ChevronDown, MapPin, Footprints, Bus, Train, ArrowRight, Shuffle, Armchair, Volume2, Type, CheckCircle2, ChevronUp, ChevronRight, Menu } from 'lucide-react';
 import './HomePage.css';
 import './JourneyPage.css';
 
 export default function JourneyPage() {
     const [activeNav, setActiveNav] = useState('journey');
     const [explainerOpen, setExplainerOpen] = useState(true);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
         <div className="app-container">
-            {/* SIDEBAR */}
-            <aside className="sidebar">
+            {/* MOBILE OVERLAY */}
+            <div className={`mobile-overlay ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(false)}></div>
+
+            {/* SIDEBAR NAVIGATION */}
+            <aside className={`sidebar ${isMenuOpen ? 'mobile-open' : ''}`}>
                 <div className="brand">
                     <img src="/images/logo.png" alt="ORIXA Logo" className="brand-icon-img" />
                 </div>
@@ -48,7 +52,10 @@ export default function JourneyPage() {
                 
                 {/* HEADER */}
                 <div className="journey-header">
-                    <div className="journey-title-container">
+                    <div className="jh-left">
+                        <button className="mobile-menu-btn" onClick={() => setIsMenuOpen(true)}>
+                            <Menu size={24} />
+                        </button>
                         <button className="back-btn" onClick={() => window.history.back()}>
                             <ArrowLeft size={20} />
                         </button>

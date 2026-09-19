@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { 
     Search, Bell, ChevronDown, ArrowRight, Fingerprint, 
     X, Train, MapPin, Zap, AlertCircle, Leaf, ShieldCheck, 
-    Settings, Settings2, Sliders, ArrowUpRight
+    Settings, Settings2, Sliders, ArrowUpRight, Menu
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import './HomePage.css';
@@ -22,11 +22,15 @@ const commuteData = [
 export default function ProfilePage() {
     const [activeNav, setActiveNav] = useState('profile');
     const [subTab, setSubTab] = useState('Overview');
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
         <div className="app-container">
+            {/* MOBILE OVERLAY */}
+            <div className={`mobile-overlay ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(false)}></div>
+
             {/* SIDEBAR NAVIGATION */}
-            <aside className="sidebar">
+            <aside className={`sidebar ${isMenuOpen ? 'mobile-open' : ''}`}>
                 <div className="brand">
                     <img src="/images/logo.png" alt="ORIXA Logo" className="brand-icon-img" />
                 </div>
@@ -63,9 +67,14 @@ export default function ProfilePage() {
                 
                 {/* HEADER */}
                 <div className="profile-header">
-                    <div className="search-bar-container">
-                        <Search size={18} color="#6B8FB5" />
-                        <input type="text" placeholder="Search preferences, vehicles..." />
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                        <button className="mobile-menu-btn" onClick={() => setIsMenuOpen(true)}>
+                            <Menu size={24} />
+                        </button>
+                        <div className="search-bar-container">
+                            <Search size={18} color="#6B8FB5" />
+                            <input type="text" placeholder="Search preferences, vehicles..." />
+                        </div>
                     </div>
 
                     <div className="top-controls" style={{ flexDirection: 'row', alignItems: 'center' }}>

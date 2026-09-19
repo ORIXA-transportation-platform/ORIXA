@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Mic, Calendar, ChevronDown, Bell, MapPin, Clock, ArrowRight, ChevronRight, Bus, Train, Plane, Car } from 'lucide-react';
+import { Search, Mic, Calendar, ChevronDown, Bell, MapPin, Clock, ArrowRight, ChevronRight, Bus, Train, Plane, Car, Menu } from 'lucide-react';
 import './HomePage.css';
 
 export default function HomePage() {
     const [activeNav, setActiveNav] = useState('home');
     const [activeTransport, setActiveTransport] = useState('bus');
     const [destination, setDestination] = useState('');
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handlePlan = () => {
         if (!destination.trim()) {
@@ -35,8 +36,11 @@ export default function HomePage() {
 
     return (
         <div className="app-container">
-            {/* SIDEBAR */}
-            <aside className="sidebar">
+            {/* MOBILE OVERLAY */}
+            <div className={`mobile-overlay ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(false)}></div>
+
+            {/* SIDEBAR NAVIGATION */}
+            <aside className={`sidebar ${isMenuOpen ? 'mobile-open' : ''}`}>
                 <div className="brand">
                     <img src="/images/logo.png" alt="ORIXA Logo" className="brand-icon-img" />
                 </div>
@@ -80,10 +84,15 @@ export default function HomePage() {
                 <div className="content-wrapper">
                     {/* HEADER */}
                     <div className="header-row">
-                        <div className="welcome-text">
-                            <p className="motto">Smarter Journey. A Brighter Tomorrow.</p>
-                            <h1>Good morning, Oshen</h1>
-                            <p className="question">Where do you want to go today?</p>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+                            <button className="mobile-menu-btn" onClick={() => setIsMenuOpen(true)}>
+                                <Menu size={24} />
+                            </button>
+                            <div className="welcome-text">
+                                <div className="motto">AI-DRIVEN COMMUTE</div>
+                                <h1>Welcome back, Oshen</h1>
+                                <div className="question">Where are we optimizing your travel to today?</div>
+                            </div>
                         </div>
                         <div className="top-controls">
                             <div className="controls-row-1">

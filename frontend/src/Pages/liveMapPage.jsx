@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
     ArrowLeft, Bell, ChevronDown, MapPin, Bus, Train, Plane, Car, 
-    ArrowRight, AlertTriangle, CheckCircle, Leaf, Compass, ShieldCheck, X 
+    ArrowRight, AlertTriangle, CheckCircle, Leaf, Compass, ShieldCheck, X, Menu 
 } from 'lucide-react';
 import './HomePage.css';
 import './LiveMapPage.css';
@@ -18,6 +18,7 @@ export default function LiveMapPage() {
         air2: false,
         roads: false
     });
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleToggle = (key) => {
         setToggles(prev => ({ ...prev, [key]: !prev[key] }));
@@ -61,8 +62,11 @@ export default function LiveMapPage() {
 
             </div>
 
+            {/* MOBILE OVERLAY */}
+            <div className={`mobile-overlay ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(false)}></div>
+
             {/* SIDEBAR NAVIGATION */}
-            <aside className="sidebar" style={{ zIndex: 100 }}>
+            <aside className={`sidebar ${isMenuOpen ? 'mobile-open' : ''}`} style={{ zIndex: 100 }}>
                 <div className="brand">
                     <img src="/images/logo.png" alt="ORIXA Logo" className="brand-icon-img" />
                 </div>
@@ -100,6 +104,9 @@ export default function LiveMapPage() {
                 {/* HEADER ROW */}
                 <div className="map-header">
                     <div className="map-title-row">
+                        <button className="mobile-menu-btn" onClick={() => setIsMenuOpen(true)}>
+                            <Menu size={24} />
+                        </button>
                         <button className="back-btn-map" onClick={() => window.history.back()}>
                             <ArrowLeft size={20} />
                         </button>
