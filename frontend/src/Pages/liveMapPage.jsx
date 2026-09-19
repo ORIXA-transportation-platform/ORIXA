@@ -1,271 +1,314 @@
+/**
+ * ORIXA – Live Map Page
+ * ─────────────────────
+ * Full-screen map HUD with telemetry panels.
+ * • Receives journey state from Journey page
+ * • Back button → /journey
+ * • Transport layer toggles update state
+ * • Journey update card: "View changes" opens inline panel
+ * • Map pins clickable
+ */
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { 
-    ArrowLeft, Bell, ChevronDown, MapPin, Bus, Train, Plane, Car, 
-    ArrowRight, AlertTriangle, CheckCircle, Leaf, Compass, ShieldCheck, X, Menu 
+import { useNavigate, useLocation } from 'react-router-dom';
+import {
+  ArrowLeft, Bell, ChevronDown, MapPin, Bus, Train, Plane, Car,
+  ArrowRight, AlertTriangle, CheckCircle, Leaf, Compass, ShieldCheck, X, Menu
 } from 'lucide-react';
+import AppLayout from '../components/user/AppLayout';
 import './HomePage.css';
 import './LiveMapPage.css';
 
 export default function LiveMapPage() {
-    const [activeNav, setActiveNav] = useState('live-map');
-    
-    // Map toggles state
-    const [toggles, setToggles] = useState({
-        bus: false,
-        train: true,
-        air1: false,
-        air2: false,
-        roads: false
-    });
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate  = useNavigate();
+  const location  = useLocation();
+  const { journey } = location.state || {};
 
-    const handleToggle = (key) => {
-        setToggles(prev => ({ ...prev, [key]: !prev[key] }));
-    };
+  const [toggles, setToggles] = useState({ bus: false, train: true, air1: false, air2: false, roads: false });
+  const [showChanges, setShowChanges] = useState(false);
+  const [selectedPin, setSelectedPin] = useState(null);
+  const [dismissed, setDismissed] = useState(false);
 
-    return (
-        <div className="map-page-wrapper">
-            
-            {/* BACKGROUND MAP CANVAS */}
-            <div className="map-canvas-bg">
-                <div className="map-canvas-overlay"></div>
-                
-                {/* Simulated Live Waypoints on Map */}
-                
-                {/* KDU University Pin */}
-                <div className="map-pin" style={{ top: '35%', left: '60%' }}>
-                    <div className="pin-icon-circle"><MapPin size={14} /></div>
-                    KDU University
-                </div>
+  const handleToggle = (key) => setToggles(prev => ({ ...prev, [key]: !prev[key] }));
 
-                {/* You Are Here */}
-                <div className="you-are-here-marker" style={{ top: '60%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-                    <div className="map-pin" style={{ position: 'relative', top: '-25px' }}>
-                        <div className="pin-icon-circle"><MapPin size={14} /></div>
-                        You are here
-                    </div>
-                    <div className="orb-glow"></div>
-                </div>
+  return (
+    <AppLayout>
+      <div className="map-page-wrapper" aria-label="Live Map">
 
-                {/* Train Pin 1 */}
-                <div className="map-pin train-pin" style={{ top: '45%', left: '25%' }}>
-                    <div className="pin-icon-circle"><Train size={14} /></div>
-                    <div>
-                        <p>Autonomous Rail 07</p>
-                        <small>4 min to next stop</small>
-                    </div>
-                </div>
+        {/* ── BACKGROUND MAP ── */}
+        <div className="map-canvas-bg" aria-hidden="true">
+          <div className="map-canvas-overlay" />
 
-                {/* Train Thumbnail floating */}
-                <img src="/images/train_pod.png" alt="Train" className="floating-train-pod" style={{ top: '48%', left: '35%' }} />
+          {/* KDU University Pin */}
+          <button
+            type="button"
+            className={`map-pin ${selectedPin === 'kdu' ? 'pin-selected' : ''}`}
+            style={{ top: '35%', left: '60%' }}
+            onClick={() => setSelectedPin(selectedPin === 'kdu' ? null : 'kdu')}
+            aria-label="KDU University pin"
+            aria-pressed={selectedPin === 'kdu'}
+          >
+            <div className="pin-icon-circle" aria-hidden="true"><MapPin size={14} /></div>
+            KDU University
+          </button>
 
+          {/* You Are Here */}
+          <div
+            className="you-are-here-marker"
+            style={{ top: '60%', left: '50%', transform: 'translate(-50%, -50%)' }}
+            aria-label="Your current location"
+          >
+            <button
+              type="button"
+              className={`map-pin ${selectedPin === 'me' ? 'pin-selected' : ''}`}
+              style={{ position: 'relative', top: '-25px' }}
+              onClick={() => setSelectedPin(selectedPin === 'me' ? null : 'me')}
+              aria-label="Your location"
+              aria-pressed={selectedPin === 'me'}
+            >
+              <div className="pin-icon-circle" aria-hidden="true"><MapPin size={14} /></div>
+              You are here
+            </button>
+            <div className="orb-glow" aria-hidden="true" />
+          </div>
+
+          {/* Train Pin */}
+          <button
+            type="button"
+            className={`map-pin train-pin ${selectedPin === 'train' ? 'pin-selected' : ''}`}
+            style={{ top: '45%', left: '25%' }}
+            onClick={() => setSelectedPin(selectedPin === 'train' ? null : 'train')}
+            aria-label="Autonomous Rail 07 location"
+            aria-pressed={selectedPin === 'train'}
+          >
+            <div className="pin-icon-circle" aria-hidden="true"><Train size={14} /></div>
+            <div>
+              <p>Autonomous Rail 07</p>
+              <small>4 min to next stop</small>
             </div>
+          </button>
 
-            {/* MOBILE OVERLAY */}
-            <div className={`mobile-overlay ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(false)}></div>
-
-            {/* SIDEBAR NAVIGATION */}
-            <aside className={`sidebar ${isMenuOpen ? 'mobile-open' : ''}`} style={{ zIndex: 100 }}>
-                <div className="brand">
-                    <img src="/images/logo.png" alt="ORIXA Logo" className="brand-icon-img" />
-                </div>
-                <nav className="nav-menu">
-                    <Link to="/home" className={`nav-item ${activeNav === 'home' ? 'active' : ''}`} onClick={() => setActiveNav('home')}>
-                        <svg viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path><path d="M9 21v-7h6v7"></path></svg>
-                        <span>Home</span>
-                    </Link>
-                    <Link to="/journey" className={`nav-item ${activeNav === 'journey' ? 'active' : ''}`} onClick={() => setActiveNav('journey')}>
-                        <svg viewBox="0 0 24 24"><circle cx="5" cy="19" r="2"></circle><circle cx="19" cy="5" r="2"></circle><path d="M7 19c6 0 4-10 10-14"></path></svg>
-                        <span>Journey</span>
-                    </Link>
-                    <Link to="/live-map" className={`nav-item ${activeNav === 'live-map' ? 'active' : ''}`} onClick={() => setActiveNav('live-map')}>
-                        <svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
-                        <span>Live Map</span>
-                    </Link>
-                    <Link to="/profile" className={`nav-item ${activeNav === 'profile' ? 'active' : ''}`} onClick={() => setActiveNav('profile')}>
-                        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c.8-4 3.5-6 8-6s7.2 2 8 6"></path></svg>
-                        <span>Profile</span>
-                    </Link>
-                </nav>
-                <div className="ai-assistant-mini">
-                    <img src="/images/ai_robot.png" alt="AI Robot" style={{ objectFit: 'cover' }} />
-                    <div className="ai-mini-text">
-                        <strong>AI Travel Assistant</strong>
-                        <small>Always here to help</small>
-                    </div>
-                    <ArrowRight size={14} className="ai-mini-arrow" />
-                </div>
-            </aside>
-
-            {/* HUD OVERLAY LAYER */}
-            <div className="hud-layer">
-                
-                {/* HEADER ROW */}
-                <div className="map-header">
-                    <div className="map-title-row">
-                        <button className="mobile-menu-btn" onClick={() => setIsMenuOpen(true)}>
-                            <Menu size={24} />
-                        </button>
-                        <button className="back-btn-map" onClick={() => window.history.back()}>
-                            <ArrowLeft size={20} />
-                        </button>
-                        <h1>Live Map</h1>
-                        <div className="live-badge">
-                            <div className="live-dot"></div> Live
-                        </div>
-                    </div>
-
-                    <div className="hud-top-right">
-                        <div className="network-pill" style={{ pointerEvents: 'auto' }}>
-                            <div className="network-dot" style={{ background: '#10B981', boxShadow: 'none' }}></div>
-                            City network operational
-                        </div>
-                        <div className="weather-pill" style={{ pointerEvents: 'auto' }}>
-                            <span className="weather-icon">🌤️</span>
-                            <div className="weather-text">
-                                <strong>28°C</strong>
-                                <small>Colombo</small>
-                            </div>
-                        </div>
-                        <button className="bell-btn" style={{ pointerEvents: 'auto' }}>
-                            <Bell size={18} />
-                        </button>
-                        <div className="profile-pill" style={{ pointerEvents: 'auto' }}>
-                            <div className="avatar" style={{ background: '#8B5CF6', color: '#FFF' }}>OK</div>
-                            <span>Oshen Karunathilaka</span>
-                            <ChevronDown size={14} />
-                        </div>
-                    </div>
-                </div>
-
-                {/* LEFT FLOATING MAP CONTROLS */}
-                <div className="map-controls-left">
-                    <div className="layer-toggles-container">
-                        <div className={`map-control-btn ${toggles.bus ? 'active' : ''}`} onClick={() => handleToggle('bus')}>
-                            <Bus size={18} /> Bus
-                        </div>
-                        <div className={`map-control-btn ${toggles.train ? 'active' : ''}`} onClick={() => handleToggle('train')}>
-                            <Train size={18} /> Train
-                        </div>
-                        <div className={`map-control-btn ${toggles.air1 ? 'active' : ''}`} onClick={() => handleToggle('air1')}>
-                            <Plane size={18} /> Air
-                        </div>
-                        <div className={`map-control-btn ${toggles.air2 ? 'active' : ''}`} onClick={() => handleToggle('air2')}>
-                            <Plane size={18} /> Air
-                        </div>
-                        <div className={`map-control-btn ${toggles.roads ? 'active' : ''}`} onClick={() => handleToggle('roads')}>
-                            <Car size={18} /> Roads
-                        </div>
-                    </div>
-                    <div className="compass-btn">
-                        <Compass size={20} style={{ transform: 'rotate(45deg)' }} />
-                    </div>
-                </div>
-
-                {/* RIGHT TELEMETRY PANELS */}
-                <div className="telemetry-column">
-                    
-                    {/* A. Journey Update (Purple) */}
-                    <div className="tele-card card-purple">
-                        <div className="ju-top">
-                            <div className="ju-icon"><AlertTriangle size={20} /></div>
-                            <div className="ju-text">
-                                <small>Journey Update</small>
-                                <h3>Rail disruption detected</h3>
-                                <p>Your journey has been detected.</p>
-                            </div>
-                            <div className="ju-close"><X size={16} /></div>
-                        </div>
-                        <div className="ju-bottom">
-                            <div className="ju-eta">
-                                <h4>New arrival</h4>
-                                <div className="ju-eta-times">
-                                    <span className="new">7:41 PM</span>
-                                    <span className="old">7:35 PM</span>
-                                </div>
-                            </div>
-                            <div className="ju-actions">
-                                <span className="badge-changes">11 new changes</span>
-                                <button className="btn-view-changes">View changes</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* B. Train Telemetry */}
-                    <div className="tele-card">
-                        <div className="train-header">
-                            <div className="th-left">
-                                <h3>Autonomous Rail 07</h3>
-                                <div className="th-status">
-                                    <CheckCircle size={14} /> Moving normally
-                                </div>
-                            </div>
-                            <div className="th-right">
-                                <img src="/images/train_pod.png" alt="Train" />
-                            </div>
-                        </div>
-                        <div className="train-mid">
-                            <div className="tm-left">
-                                <small>Next stop</small>
-                                <div>Central Hub</div>
-                            </div>
-                            <div className="tm-right">4 min</div>
-                        </div>
-                        <div className="train-scrubber">
-                            <div className="ts-bar">
-                                <div className="ts-fill"></div>
-                                <div className="ts-dot"></div>
-                            </div>
-                            <div className="ts-labels">
-                                <span>KDU</span>
-                                <span>to next stop</span>
-                                <span>Final Stop</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* C. Journey Guardian */}
-                    <div className="tele-card">
-                        <div className="guardian-header">
-                            <div className="gh-title">
-                                <div className="gh-icon"><ShieldCheck size={24} /></div>
-                                <div className="gh-text">
-                                    <h3>Journey Guardian</h3>
-                                    <p>Your travel congestion</p>
-                                </div>
-                            </div>
-                            <div className="gh-badge">
-                                <CheckCircle size={12} /> All good
-                            </div>
-                        </div>
-                        <div className="check-list-g">
-                            <div className="c-item"><CheckCircle size={16} /> Route stable</div>
-                            <div className="c-item"><CheckCircle size={16} /> Your usual travel preference</div>
-                            <div className="c-item"><CheckCircle size={16} /> High vehicle availability</div>
-                        </div>
-                    </div>
-
-                    {/* D. Journey Impact */}
-                    <div className="tele-card">
-                        <div className="impact-header">
-                            <div className="impact-icon"><Leaf size={28} /></div>
-                            <div className="impact-text">
-                                <p>Your Journey Impact</p>
-                                <h2>Low impact</h2>
-                            </div>
-                        </div>
-                        <div className="impact-sub">
-                            12% less energy than fastest route
-                        </div>
-                        <div className="impact-bar">
-                            <div className="impact-fill"></div>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
+          {/* Floating train pod image */}
+          <img
+            src="/images/train_pod.png"
+            alt="Train pod"
+            className="floating-train-pod"
+            style={{ top: '48%', left: '35%' }}
+          />
         </div>
-    );
+
+        {/* ── HUD OVERLAY ── */}
+        <div className="hud-layer">
+
+          {/* HEADER */}
+          <div className="map-header">
+            <div className="map-title-row">
+              <button
+                type="button"
+                className="back-btn-map"
+                onClick={() => navigate('/journey')}
+                aria-label="Back to journey"
+              >
+                <ArrowLeft size={20} />
+              </button>
+              <h1>Live Map</h1>
+              <div className="live-badge" aria-label="Live data">
+                <div className="live-dot" aria-hidden="true" />Live
+              </div>
+            </div>
+
+            <div className="hud-top-right">
+              <div className="network-pill">
+                <div className="network-dot" style={{ background: '#10B981', boxShadow: 'none' }} />
+                City network operational
+              </div>
+              <div className="weather-pill">
+                <span className="weather-icon">🌤️</span>
+                <div className="weather-text"><strong>28°C</strong><small>Colombo</small></div>
+              </div>
+              <button type="button" className="bell-btn" aria-label="Notifications">
+                <Bell size={18} />
+              </button>
+              <div
+                className="profile-pill"
+                role="button"
+                tabIndex={0}
+                aria-label="Profile: Oshen Karunathilaka"
+              >
+                <div className="avatar" style={{ background: '#8B5CF6', color: '#FFF' }} aria-hidden="true">OK</div>
+                <span className="profile-name">Oshen Karunathilaka</span>
+                <ChevronDown size={14} />
+              </div>
+            </div>
+          </div>
+
+          {/* LEFT CONTROLS */}
+          <div className="map-controls-left">
+            <div className="layer-toggles-container" role="group" aria-label="Map layers">
+              {[
+                { key: 'bus',   Icon: Bus,   label: 'Bus'   },
+                { key: 'train', Icon: Train, label: 'Train' },
+                { key: 'air1',  Icon: Plane, label: 'Air'   },
+                { key: 'roads', Icon: Car,   label: 'Roads' },
+              ].map(({ key, Icon, label }) => (
+                <button
+                  key={key}
+                  type="button"
+                  className={`map-control-btn ${toggles[key] ? 'active' : ''}`}
+                  onClick={() => handleToggle(key)}
+                  aria-pressed={toggles[key]}
+                  aria-label={`Toggle ${label} layer`}
+                >
+                  <Icon size={18} aria-hidden="true" /> {label}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="compass-btn"
+              aria-label="Reset map orientation"
+              onClick={() => setSelectedPin(null)}
+            >
+              <Compass size={20} style={{ transform: 'rotate(45deg)' }} aria-hidden="true" />
+            </button>
+          </div>
+
+          {/* RIGHT TELEMETRY */}
+          <div className="telemetry-column" role="complementary" aria-label="Journey telemetry">
+
+            {/* A. Journey Update */}
+            {!dismissed && (
+              <div className="tele-card card-purple">
+                <div className="ju-top">
+                  <div className="ju-icon" aria-hidden="true"><AlertTriangle size={20} /></div>
+                  <div className="ju-text">
+                    <small>Journey Update</small>
+                    <h3>Rail disruption detected</h3>
+                    <p>Your journey has been re-optimised.</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="ju-close"
+                    onClick={() => setDismissed(true)}
+                    aria-label="Dismiss notification"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+                <div className="ju-bottom">
+                  <div className="ju-eta">
+                    <h4>New arrival</h4>
+                    <div className="ju-eta-times">
+                      <span className="new">7:41 PM</span>
+                      <span className="old">7:35 PM</span>
+                    </div>
+                  </div>
+                  <div className="ju-actions">
+                    <span className="badge-changes">11 new changes</span>
+                    <button
+                      type="button"
+                      className="btn-view-changes"
+                      onClick={() => setShowChanges(p => !p)}
+                      aria-expanded={showChanges}
+                    >
+                      {showChanges ? 'Hide changes' : 'View changes'}
+                    </button>
+                  </div>
+                </div>
+                {/* Changes panel */}
+                {showChanges && (
+                  <div className="changes-panel" role="region" aria-label="Route changes">
+                    <div className="change-item">
+                      <CheckCircle size={13} className="change-ok" aria-hidden="true" />
+                      Rerouted via Southern Express Line
+                    </div>
+                    <div className="change-item">
+                      <CheckCircle size={13} className="change-ok" aria-hidden="true" />
+                      New Platform: D2 → B4
+                    </div>
+                    <div className="change-item">
+                      <AlertTriangle size={13} className="change-warn" aria-hidden="true" />
+                      Arrival shifted by +6 minutes
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* B. Train Telemetry */}
+            <div className="tele-card">
+              <div className="train-header">
+                <div className="th-left">
+                  <h3>Autonomous Rail 07</h3>
+                  <div className="th-status" aria-label="Status: Moving normally">
+                    <CheckCircle size={14} aria-hidden="true" /> Moving normally
+                  </div>
+                </div>
+                <div className="th-right">
+                  <img src="/images/train_pod.png" alt="Rail 07 train pod" />
+                </div>
+              </div>
+              <div className="train-mid">
+                <div className="tm-left">
+                  <small>Next stop</small>
+                  <div>Central Hub</div>
+                </div>
+                <div className="tm-right" aria-label="4 minutes">4 min</div>
+              </div>
+              <div className="train-scrubber" aria-label="Train progress">
+                <div className="ts-bar" role="progressbar" aria-valuenow={40} aria-valuemin={0} aria-valuemax={100}>
+                  <div className="ts-fill" />
+                  <div className="ts-dot" />
+                </div>
+                <div className="ts-labels" aria-hidden="true">
+                  <span>KDU</span>
+                  <span>to next stop</span>
+                  <span>Final Stop</span>
+                </div>
+              </div>
+            </div>
+
+            {/* C. Journey Guardian */}
+            <div className="tele-card">
+              <div className="guardian-header">
+                <div className="gh-title">
+                  <div className="gh-icon" aria-hidden="true"><ShieldCheck size={24} /></div>
+                  <div className="gh-text">
+                    <h3>Journey Guardian</h3>
+                    <p>Your travel congestion</p>
+                  </div>
+                </div>
+                <div className="gh-badge" aria-label="Status: All good">
+                  <CheckCircle size={12} aria-hidden="true" /> All good
+                </div>
+              </div>
+              <div className="check-list-g">
+                {['Route stable', 'Your usual travel preference', 'High vehicle availability'].map(item => (
+                  <div key={item} className="c-item">
+                    <CheckCircle size={16} aria-hidden="true" /> {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* D. Journey Impact */}
+            <div className="tele-card">
+              <div className="impact-header">
+                <div className="impact-icon" aria-hidden="true"><Leaf size={28} /></div>
+                <div className="impact-text">
+                  <p>Your Journey Impact</p>
+                  <h2>Low impact</h2>
+                </div>
+              </div>
+              <div className="impact-sub">12% less energy than fastest route</div>
+              <div className="impact-bar" role="progressbar" aria-valuenow={88} aria-valuemin={0} aria-valuemax={100} aria-label="Impact level: 88%">
+                <div className="impact-fill" />
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </AppLayout>
+  );
 }

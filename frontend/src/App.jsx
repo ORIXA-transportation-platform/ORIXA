@@ -2,39 +2,34 @@
  * ORIXA – App.jsx
  * ────────────────
  * Root router configuration.
- * • Public routes  – landing, login (no sidebar)
- * • User routes    – home, journey, live-map, profile (with sidebar via UserLayout)
+ * All app routes are wrapped in AppLayout which provides the shared sidebar.
  */
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-// Navigation & Layout
-import SideNavbar from './components/user/sideNavbar';
+// Shared Layout
+import AppLayout from './components/user/AppLayout';
 
 // Pages
-import HomePage     from './Pages/homePage';
-import JourneyPage  from './Pages/journeyPage';
-import LiveMapPage  from './Pages/liveMapPage';
-import ProfilePage  from './Pages/profilePage';
+import HomePage    from './Pages/homePage';
+import JourneyPage from './Pages/journeyPage';
+import LiveMapPage from './Pages/liveMapPage';
+import ProfilePage from './Pages/profilePage';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ── Redirect root to /home ───────────────────────────── */}
+        {/* Redirect root to /home */}
         <Route path="/" element={<Navigate to="/home" replace />} />
 
-        {/* ── Public Route (Standalone) ───────────────────────── */}
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/journey" element={<JourneyPage />} />
+        {/* App pages — each page receives AppLayout internally */}
+        <Route path="/home"     element={<HomePage />} />
+        <Route path="/journey"  element={<JourneyPage />} />
         <Route path="/live-map" element={<LiveMapPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/profile"  element={<ProfilePage />} />
 
-        {/* ── User / authenticated area (unified SideNavbar layout) ─ */}
-        <Route element={<SideNavbar />}>
-        </Route>
-
-        {/* ── Catch-all fallback ───────────────────────────────── */}
+        {/* Catch-all fallback */}
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </BrowserRouter>

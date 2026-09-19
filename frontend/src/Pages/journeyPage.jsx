@@ -1,263 +1,478 @@
+/**
+ * ORIXA – Journey Page
+ * ─────────────────────
+ * Receives destination + transport state from Home page.
+ * Shows:
+ *  1. Route Results list (select a route)
+ *  2. Journey Detail view (timeline, start journey)
+ * Functional back button, preference pills, Start Journey → Live Map.
+ */
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Bell, ChevronDown, MapPin, Footprints, Bus, Train, ArrowRight, Shuffle, Armchair, Volume2, Type, CheckCircle2, ChevronUp, ChevronRight, Menu } from 'lucide-react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import {
+  ArrowLeft, Bell, ChevronDown, MapPin, Footprints, Bus, Train,
+  ArrowRight, Shuffle, Armchair, Volume2, Type, CheckCircle2,
+  ChevronUp, ChevronRight, Clock, Zap, Leaf,
+} from 'lucide-react';
+import AppLayout from '../components/user/AppLayout';
 import './HomePage.css';
 import './JourneyPage.css';
 
+/* ─── Mock route options ─── */
+const buildRoutes = (destination, transport) => [
+  {
+    id: 1,
+    label: 'Recommended',
+    badge: 'FASTEST',
+    badgeColor: 'cyan',
+    dest: destination || 'KDU University',
+    eta: 'Arrive by 7:42 AM',
+    confidence: '97%',
+    duration: '42 min',
+    transfers: '2 transfers',
+    co2: 'Low impact',
+    legs: [
+      { type: 'walk',  label: 'Walk', duration: '4 min' },
+      { type: 'bus',   label: 'Bus',  duration: '12 min' },
+      { type: 'train', label: 'Rail', duration: '21 min' },
+    ],
+  },
+  {
+    id: 2,
+    label: 'Alternative',
+    badge: 'FEWER STOPS',
+    badgeColor: 'purple',
+    dest: destination || 'KDU University',
+    eta: 'Arrive by 7:58 AM',
+    confidence: '91%',
+    duration: '56 min',
+    transfers: '1 transfer',
+    co2: 'Medium impact',
+    legs: [
+      { type: 'walk',  label: 'Walk', duration: '6 min' },
+      { type: 'train', label: 'Rail', duration: '45 min' },
+    ],
+  },
+  {
+    id: 3,
+    label: 'Budget',
+    badge: 'CHEAPEST',
+    badgeColor: 'green',
+    dest: destination || 'KDU University',
+    eta: 'Arrive by 8:15 AM',
+    confidence: '88%',
+    duration: '71 min',
+    transfers: 'Direct',
+    co2: 'Very low impact',
+    legs: [
+      { type: 'bus', label: 'Bus', duration: '65 min' },
+    ],
+  },
+];
+
+const LEG_ICON = { walk: Footprints, bus: Bus, train: Train };
+
 export default function JourneyPage() {
-    const [activeNav, setActiveNav] = useState('journey');
-    const [explainerOpen, setExplainerOpen] = useState(true);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate  = useNavigate();
+  const location  = useLocation();
 
-    return (
-        <div className="app-container">
-            {/* MOBILE OVERLAY */}
-            <div className={`mobile-overlay ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(false)}></div>
+  const { destination = 'KDU University', transport = 'bus', arrivalTime = '08:00' } =
+    location.state || {};
 
-            {/* SIDEBAR NAVIGATION */}
-            <aside className={`sidebar ${isMenuOpen ? 'mobile-open' : ''}`}>
-                <div className="brand">
-                    <img src="/images/logo.png" alt="ORIXA Logo" className="brand-icon-img" />
-                </div>
-                <nav className="nav-menu">
-                    <Link to="/home" className={`nav-item ${activeNav === 'home' ? 'active' : ''}`}>
-                        <svg viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path><path d="M9 21v-7h6v7"></path></svg>
-                        <span>Home</span>
-                    </Link>
-                    <Link to="/journey" className={`nav-item ${activeNav === 'journey' ? 'active' : ''}`}>
-                        <svg viewBox="0 0 24 24"><circle cx="5" cy="19" r="2"></circle><circle cx="19" cy="5" r="2"></circle><path d="M7 19c6 0 4-10 10-14"></path></svg>
-                        <span>Journey</span>
-                    </Link>
-                    <Link to="/live-map" className={`nav-item ${activeNav === 'live-map' ? 'active' : ''}`}>
-                        <svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
-                        <span>Live Map</span>
-                    </Link>
-                    <Link to="/profile" className={`nav-item ${activeNav === 'profile' ? 'active' : ''}`}>
-                        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c.8-4 3.5-6 8-6s7.2 2 8 6"></path></svg>
-                        <span>Profile</span>
-                    </Link>
-                </nav>
-                <div className="ai-assistant-mini">
-                    <img src="/images/ai_robot.png" alt="AI Robot" style={{ objectFit: 'cover' }} />
-                    <div className="ai-mini-text">
-                        <strong>AI Travel Assistant</strong>
-                        <small>Always here to help</small>
-                    </div>
-                    <ArrowRight size={14} className="ai-mini-arrow" />
-                </div>
-            </aside>
+  const routes = buildRoutes(destination, transport);
 
-            {/* MAIN CONTENT */}
-            <main className="journey-content">
-                
-                {/* HEADER */}
-                <div className="journey-header">
-                    <div className="jh-left">
-                        <button className="mobile-menu-btn" onClick={() => setIsMenuOpen(true)}>
-                            <Menu size={24} />
-                        </button>
-                        <button className="back-btn" onClick={() => window.history.back()}>
-                            <ArrowLeft size={20} />
-                        </button>
-                        <h1>Journey Details</h1>
-                    </div>
-                    <div className="top-controls" style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <div className="weather-pill">
-                            <span className="weather-icon">🌤️</span>
-                            <div className="weather-text">
-                                <strong>28°C</strong>
-                                <small>Colombo</small>
-                            </div>
-                        </div>
-                        <div className="network-pill">
-                            <div className="network-dot"></div>
-                            City network operational
-                        </div>
-                        <div style={{ width: '20px' }}></div>
-                        <button className="bell-btn">
-                            <Bell />
-                        </button>
-                        <div className="profile-pill">
-                            <div className="avatar">OK</div>
-                            <span>Oshen Karunathilaka</span>
-                            <ChevronDown />
-                        </div>
-                    </div>
-                </div>
+  /* Two-step view: results → detail */
+  const [selectedRoute, setSelectedRoute] = useState(null);
+  const [explainerOpen, setExplainerOpen] = useState(true);
+  const [activePrefs, setActivePrefs]     = useState(['comfort']);
+  const [isStarting, setIsStarting]       = useState(false);
 
-                {/* JOURNEY GRID */}
-                <div className="journey-grid">
-                    
-                    {/* LEFT COLUMN */}
-                    <div className="j-col-left">
-                        
-                        {/* DESTINATION SUMMARY */}
-                        <div className="journey-summary-card">
-                            <div className="summary-top">
-                                <div className="dest-details">
-                                    <div className="dest-icon">
-                                        <MapPin size={24} />
-                                    </div>
-                                    <div className="dest-text">
-                                        <h2>KDU University</h2>
-                                        <p>Kandawala Road, Ratmalana</p>
-                                    </div>
-                                </div>
-                                <div className="eta-badge">
-                                    <h3>Arrive by 7:42 PM</h3>
-                                    <div className="ai-confidence">
-                                        ✨ 97% confidence
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="optimization-banner">
-                                <div className="opt-left">
-                                    <span className="opt-glow-tag">JOURNEY OPTIMIZED</span>
-                                    <span className="opt-stats">42 min • 2 transfers</span>
-                                </div>
-                                <a href="#" className="opt-link">Why this route? <ArrowRight size={14} /></a>
-                            </div>
-                        </div>
-
-                        {/* TIMELINE */}
-                        <div className="timeline-container">
-                            
-                            {/* Node 1: Walking */}
-                            <div className="timeline-item">
-                                <div className="timeline-visual">
-                                    <div className="t-node cyan"><Footprints /></div>
-                                    <div className="t-line cyan"></div>
-                                </div>
-                                <div className="timeline-content">
-                                    <h4>Your Location</h4>
-                                    <p>4 min walk • 320 m</p>
-                                    <a href="#" style={{ color: '#14E1FF', fontSize: '13px', textDecoration: 'none' }}>View map {'>'}</a>
-                                </div>
-                            </div>
-
-                            {/* Node 2: Bus */}
-                            <div className="timeline-item">
-                                <div className="timeline-visual">
-                                    <div className="t-node cyan"><Bus /></div>
-                                    <div className="t-line cyan"></div>
-                                </div>
-                                <div className="timeline-content">
-                                    <h4>Autonomous Bus (Rail 07 8-204)</h4>
-                                    <div className="t-meta" style={{ marginBottom: '8px' }}>
-                                        <span className="status-pill">On-time</span>
-                                        <span className="t-meta-text">Departs in 3 min • Platform A</span>
-                                    </div>
-                                    <p>12 min transit time</p>
-                                </div>
-                            </div>
-
-                            {/* Node 3: Transfer Hub */}
-                            <div className="timeline-item">
-                                <div className="timeline-visual">
-                                    <div className="t-node dark"><MapPin size={12} /></div>
-                                    <div className="t-line dotted"></div>
-                                    <div className="t-node dark" style={{ marginTop: '8px' }}><MapPin size={12} /></div>
-                                    <div className="t-line dotted"></div>
-                                </div>
-                                <div className="timeline-content">
-                                    <h4>Intermodal Transfer Hub</h4>
-                                    <p>2 min transfer • Station map • Accessible from Platform B</p>
-                                </div>
-                            </div>
-
-                            {/* Node 4: Rail */}
-                            <div className="timeline-item">
-                                <div className="timeline-visual">
-                                    <div className="t-node purple"><Train /></div>
-                                </div>
-                                <div className="timeline-content">
-                                    <h4>Autonomous Rail (Rail 07)</h4>
-                                    <div className="t-meta" style={{ marginBottom: '8px' }}>
-                                        <span className="status-pill" style={{ color: '#8B5CF6', background: 'rgba(139, 92, 246, 0.1)' }}>Connection secured</span>
-                                    </div>
-                                    <p>21 min transit time</p>
-                                </div>
-                            </div>
-
-                            <button className="start-journey-btn">
-                                Start Journey <ArrowRight size={18} />
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* RIGHT COLUMN */}
-                    <div className="j-col-right">
-                        
-                        {/* PREVIEW & MATRIX */}
-                        <div className="preview-card">
-                            <h3>Journey Preview</h3>
-                            <div className="schematic">
-                                <div className="sch-step">
-                                    <div className="sch-icon"><Footprints size={16}/></div>
-                                    <span className="sch-label">Walk</span>
-                                </div>
-                                <div className="sch-connector">
-                                    <span className="sch-connector-line"></span>
-                                    <ChevronRight size={16} color="#6B8FB5"/>
-                                </div>
-                                <div className="sch-step">
-                                    <div className="sch-icon"><Bus size={16}/></div>
-                                    <span className="sch-label">Bus</span>
-                                </div>
-                                <div className="sch-connector">
-                                    <span className="sch-connector-line"></span>
-                                    <ChevronRight size={16} color="#6B8FB5"/>
-                                </div>
-                                <div className="sch-step">
-                                    <div className="sch-icon" style={{ background: '#1C153B', color: '#8B5CF6' }}><Train size={16}/></div>
-                                    <span className="sch-label">Rail</span>
-                                </div>
-                            </div>
-                            <div className="duration-matrix">
-                                <div className="d-item"><span>Walk</span><strong>4 min</strong></div>
-                                <div className="d-item"><span>Bus</span><strong>12 min</strong></div>
-                                <div className="d-item"><span>Rail</span><strong>21 min</strong></div>
-                                <div className="d-item d-total"><span>Total</span><strong>42 min</strong></div>
-                            </div>
-                        </div>
-
-                        {/* PREFERENCES */}
-                        <div className="preferences-bar">
-                            <button className="pref-pill"><Shuffle size={14}/> Fewer transfers</button>
-                            <button className="pref-pill active"><Armchair size={14}/> More comfort</button>
-                            <button className="pref-pill"><Volume2 size={14}/> Visual + Audio</button>
-                            <button className="pref-pill"><Type size={14}/> Large text / AI</button>
-                        </div>
-
-                        {/* EXPLAINER CARD */}
-                        <div className="explainer-card">
-                            <div className="exp-header" style={{ cursor: 'pointer' }} onClick={() => setExplainerOpen(!explainerOpen)}>
-                                <h3>✨ Why this route?</h3>
-                                <ChevronUp size={20} color="#6B8FB5" style={{ transform: explainerOpen ? 'rotate(0)' : 'rotate(180deg)', transition: '0.2s' }} />
-                            </div>
-                            
-                            {explainerOpen && (
-                                <div className="exp-content">
-                                    <div className="check-list">
-                                        <div className="check-item"><CheckCircle2 /> Lowest congestion</div>
-                                        <div className="check-item"><CheckCircle2 /> Short transfer distance</div>
-                                        <div className="check-item"><CheckCircle2 /> Your travel level preference</div>
-                                        <div className="check-item"><CheckCircle2 /> High vehicle availability</div>
-                                    </div>
-                                    <div className="city-image-card">
-                                        <img src="/images/green_transit.png" alt="Transit Corridor" />
-                                        <div className="city-image-overlay">
-                                            <p>A more comfortable, efficient and sustainable journey.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                    </div>
-                </div>
-
-            </main>
-        </div>
+  const togglePref = (id) =>
+    setActivePrefs(prev =>
+      prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]
     );
+
+  const handleStartJourney = () => {
+    setIsStarting(true);
+    setTimeout(() => navigate('/live-map', { state: { journey: selectedRoute } }), 800);
+  };
+
+  /* ── Route Results View ── */
+  if (!selectedRoute) {
+    return (
+      <AppLayout>
+        <main className="journey-content" aria-label="Journey results">
+          {/* HEADER */}
+          <div className="journey-header">
+            <div className="jh-left">
+              <button
+                type="button"
+                className="back-btn"
+                onClick={() => navigate('/home')}
+                aria-label="Back to home"
+              >
+                <ArrowLeft size={20} />
+              </button>
+              <div>
+                <h1>Journey Results</h1>
+                <p className="jh-subtitle">
+                  <MapPin size={13} aria-hidden="true" /> {destination}
+                  &nbsp;·&nbsp;
+                  <Clock size={13} aria-hidden="true" /> by {arrivalTime}
+                </p>
+              </div>
+            </div>
+            <div className="jh-right-controls">
+              <div className="weather-pill" aria-label="Weather">
+                <span className="weather-icon">🌤️</span>
+                <div className="weather-text">
+                  <strong>28°C</strong>
+                  <small>Colombo</small>
+                </div>
+              </div>
+              <div className="network-pill">
+                <div className="network-dot" />
+                City network operational
+              </div>
+              <button type="button" className="bell-btn" aria-label="Notifications">
+                <Bell />
+              </button>
+              <div className="profile-pill" aria-label="Profile">
+                <div className="avatar" style={{ background: '#8B5CF6' }}>OK</div>
+                <span className="profile-name">Oshen Karunathilaka</span>
+                <ChevronDown size={14} />
+              </div>
+            </div>
+          </div>
+
+          {/* ROUTE CARDS */}
+          <div className="route-results-list">
+            {routes.map(route => {
+              const badgeClass = `route-badge badge-${route.badgeColor}`;
+              return (
+                <button
+                  key={route.id}
+                  type="button"
+                  className="route-card"
+                  onClick={() => setSelectedRoute(route)}
+                  aria-label={`Select route: ${route.label} — ${route.duration}`}
+                >
+                  <div className="rc-top">
+                    <div className="rc-left">
+                      <span className={badgeClass}>{route.badge}</span>
+                      <h3>{route.label}</h3>
+                      <p className="rc-eta">{route.eta}</p>
+                    </div>
+                    <div className="rc-right">
+                      <div className="rc-duration">{route.duration}</div>
+                      <div className="rc-confidence">✨ {route.confidence} confidence</div>
+                    </div>
+                  </div>
+
+                  {/* Leg schematic */}
+                  <div className="rc-legs">
+                    {route.legs.map((leg, idx) => {
+                      const Icon = LEG_ICON[leg.type] || Bus;
+                      return (
+                        <React.Fragment key={idx}>
+                          <div className="rc-leg">
+                            <div className={`rc-leg-icon leg-${leg.type}`}>
+                              <Icon size={14} aria-hidden="true" />
+                            </div>
+                            <span>{leg.label}</span>
+                            <span className="rc-leg-time">{leg.duration}</span>
+                          </div>
+                          {idx < route.legs.length - 1 && (
+                            <ChevronRight size={14} className="rc-leg-sep" aria-hidden="true" />
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </div>
+
+                  <div className="rc-footer">
+                    <span className="rc-meta">{route.transfers}</span>
+                    <span className="rc-meta">
+                      <Leaf size={12} aria-hidden="true" /> {route.co2}
+                    </span>
+                    <span className="rc-select-cta">
+                      Select <ArrowRight size={14} aria-hidden="true" />
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </main>
+      </AppLayout>
+    );
+  }
+
+  /* ── Journey Detail View ── */
+  return (
+    <AppLayout>
+      <main className="journey-content" aria-label="Journey details">
+
+        {/* HEADER */}
+        <div className="journey-header">
+          <div className="jh-left">
+            <button
+              type="button"
+              className="back-btn"
+              onClick={() => setSelectedRoute(null)}
+              aria-label="Back to route results"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <h1>Journey Details</h1>
+          </div>
+          <div className="jh-right-controls">
+            <div className="weather-pill">
+              <span className="weather-icon">🌤️</span>
+              <div className="weather-text">
+                <strong>28°C</strong>
+                <small>Colombo</small>
+              </div>
+            </div>
+            <div className="network-pill">
+              <div className="network-dot" />
+              City network operational
+            </div>
+            <button type="button" className="bell-btn" aria-label="Notifications">
+              <Bell />
+            </button>
+            <div className="profile-pill">
+              <div className="avatar" style={{ background: '#8B5CF6' }}>OK</div>
+              <span className="profile-name">Oshen Karunathilaka</span>
+              <ChevronDown size={14} />
+            </div>
+          </div>
+        </div>
+
+        {/* JOURNEY GRID */}
+        <div className="journey-grid">
+
+          {/* LEFT: Timeline */}
+          <div className="j-col-left">
+
+            {/* Destination summary */}
+            <div className="journey-summary-card">
+              <div className="summary-top">
+                <div className="dest-details">
+                  <div className="dest-icon"><MapPin size={24} /></div>
+                  <div className="dest-text">
+                    <h2>{selectedRoute.dest}</h2>
+                    <p>Kandawala Road, Ratmalana</p>
+                  </div>
+                </div>
+                <div className="eta-badge">
+                  <h3>{selectedRoute.eta.replace('Arrive by ', '')}</h3>
+                  <div className="ai-confidence">✨ {selectedRoute.confidence} confidence</div>
+                </div>
+              </div>
+              <div className="optimization-banner">
+                <div className="opt-left">
+                  <span className="opt-glow-tag">JOURNEY OPTIMIZED</span>
+                  <span className="opt-stats">{selectedRoute.duration} • {selectedRoute.transfers}</span>
+                </div>
+                <button
+                  type="button"
+                  className="opt-link"
+                  onClick={() => setExplainerOpen(true)}
+                  aria-label="Why this route?"
+                >
+                  Why this route? <ArrowRight size={14} aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+
+            {/* Timeline */}
+            <div className="timeline-container">
+
+              <div className="timeline-item">
+                <div className="timeline-visual">
+                  <div className="t-node cyan"><Footprints /></div>
+                  <div className="t-line cyan" />
+                </div>
+                <div className="timeline-content">
+                  <h4>Your Location</h4>
+                  <p>4 min walk • 320 m</p>
+                  <Link to="/live-map" style={{ color: '#14E1FF', fontSize: '13px', textDecoration: 'none' }}>
+                    View on map →
+                  </Link>
+                </div>
+              </div>
+
+              <div className="timeline-item">
+                <div className="timeline-visual">
+                  <div className="t-node cyan"><Bus /></div>
+                  <div className="t-line cyan" />
+                </div>
+                <div className="timeline-content">
+                  <h4>Autonomous Bus (Rail 07 8-204)</h4>
+                  <div className="t-meta" style={{ marginBottom: '8px' }}>
+                    <span className="status-pill">On-time</span>
+                    <span className="t-meta-text">Departs in 3 min • Platform A</span>
+                  </div>
+                  <p>12 min transit time</p>
+                </div>
+              </div>
+
+              <div className="timeline-item">
+                <div className="timeline-visual">
+                  <div className="t-node dark"><MapPin size={12} /></div>
+                  <div className="t-line dotted" />
+                  <div className="t-node dark" style={{ marginTop: '8px' }}><MapPin size={12} /></div>
+                  <div className="t-line dotted" />
+                </div>
+                <div className="timeline-content">
+                  <h4>Intermodal Transfer Hub</h4>
+                  <p>2 min transfer • Station map • Accessible from Platform B</p>
+                </div>
+              </div>
+
+              <div className="timeline-item">
+                <div className="timeline-visual">
+                  <div className="t-node purple"><Train /></div>
+                </div>
+                <div className="timeline-content">
+                  <h4>Autonomous Rail (Rail 07)</h4>
+                  <div className="t-meta" style={{ marginBottom: '8px' }}>
+                    <span className="status-pill" style={{ color: '#8B5CF6', background: 'rgba(139,92,246,0.1)' }}>
+                      Connection secured
+                    </span>
+                  </div>
+                  <p>21 min transit time</p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className={`start-journey-btn ${isStarting ? 'loading' : ''}`}
+                onClick={handleStartJourney}
+                disabled={isStarting}
+                aria-label="Start journey"
+              >
+                {isStarting ? (
+                  <>Preparing journey…</>
+                ) : (
+                  <>Start Journey <ArrowRight size={18} aria-hidden="true" /></>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* RIGHT: Preview + Preferences + Explainer */}
+          <div className="j-col-right">
+
+            {/* Preview */}
+            <div className="preview-card">
+              <h3>Journey Preview</h3>
+              <div className="schematic">
+                {selectedRoute.legs.map((leg, idx) => {
+                  const Icon = LEG_ICON[leg.type] || Bus;
+                  return (
+                    <React.Fragment key={idx}>
+                      <div className="sch-step">
+                        <div className={`sch-icon ${leg.type === 'train' ? 'sch-icon-purple' : ''}`}>
+                          <Icon size={16} aria-hidden="true" />
+                        </div>
+                        <span className="sch-label">{leg.label}</span>
+                      </div>
+                      {idx < selectedRoute.legs.length - 1 && (
+                        <div className="sch-connector">
+                          <span className="sch-connector-line" />
+                          <ChevronRight size={16} color="#6B8FB5" aria-hidden="true" />
+                        </div>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </div>
+              <div className="duration-matrix">
+                {selectedRoute.legs.map((leg, idx) => (
+                  <div className="d-item" key={idx}>
+                    <span>{leg.label}</span>
+                    <strong>{leg.duration}</strong>
+                  </div>
+                ))}
+                <div className="d-item d-total">
+                  <span>Total</span>
+                  <strong>{selectedRoute.duration}</strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Preferences */}
+            <div className="preferences-bar" role="group" aria-label="Journey preferences">
+              {[
+                { id: 'fewer',   Icon: Shuffle,  label: 'Fewer transfers' },
+                { id: 'comfort', Icon: Armchair, label: 'More comfort' },
+                { id: 'audio',   Icon: Volume2,  label: 'Visual + Audio' },
+                { id: 'ai',      Icon: Type,     label: 'Large text / AI' },
+              ].map(({ id, Icon, label }) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={`pref-pill ${activePrefs.includes(id) ? 'active' : ''}`}
+                  onClick={() => togglePref(id)}
+                  aria-pressed={activePrefs.includes(id)}
+                  aria-label={label}
+                >
+                  <Icon size={14} aria-hidden="true" /> {label}
+                </button>
+              ))}
+            </div>
+
+            {/* Explainer */}
+            <div className="explainer-card">
+              <div
+                className="exp-header"
+                role="button"
+                tabIndex={0}
+                onClick={() => setExplainerOpen(p => !p)}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setExplainerOpen(p => !p); }}
+                aria-expanded={explainerOpen}
+                aria-controls="explainer-content"
+              >
+                <h3>✨ Why this route?</h3>
+                <ChevronUp
+                  size={20}
+                  color="#6B8FB5"
+                  style={{ transform: explainerOpen ? 'rotate(0)' : 'rotate(180deg)', transition: '0.2s' }}
+                  aria-hidden="true"
+                />
+              </div>
+
+              {explainerOpen && (
+                <div id="explainer-content" className="exp-content">
+                  <div className="check-list">
+                    {[
+                      'Lowest congestion on this route',
+                      'Short transfer distance',
+                      'Matches your travel preference',
+                      'High vehicle availability',
+                    ].map(item => (
+                      <div key={item} className="check-item">
+                        <CheckCircle2 aria-hidden="true" /> {item}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="city-image-card">
+                    <img src="/images/green_transit.png" alt="Sustainable transit corridor" />
+                    <div className="city-image-overlay">
+                      <p>A more comfortable, efficient and sustainable journey.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+
+      </main>
+    </AppLayout>
+  );
 }
