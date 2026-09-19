@@ -58,6 +58,12 @@ export default function ProfilePage() {
     dataSharing: true,
   });
   const [prefMode, setPrefMode] = useState('Rail');
+  const [toastMsg, setToastMsg] = useState('');
+
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(''), 3000);
+  };
 
   const notifRef   = useRef(null);
   const profileRef = useRef(null);
@@ -84,15 +90,15 @@ export default function ProfilePage() {
   const renderTabContent = () => {
     switch (subTab) {
       case 'Overview':
-        return <OverviewTab vehicles={vehicles} revokeVehicle={revokeVehicle} prefMode={prefMode} setPrefMode={setPrefMode} />;
+        return <OverviewTab vehicles={vehicles} revokeVehicle={revokeVehicle} prefMode={prefMode} showToast={showToast} />;
       case 'Identity':
-        return <IdentityTab />;
+        return <IdentityTab showToast={showToast} />;
       case 'Vehicle Access':
-        return <VehicleTab vehicles={vehicles} revokeVehicle={revokeVehicle} />;
+        return <VehicleTab vehicles={vehicles} revokeVehicle={revokeVehicle} showToast={showToast} />;
       case 'Preferences':
         return <PreferencesTab prefs={prefs} setPrefs={setPrefs} prefMode={prefMode} setPrefMode={setPrefMode} />;
       case 'Settings':
-        return <SettingsTab />;
+        return <SettingsTab showToast={showToast} />;
       default:
         return null;
     }
@@ -327,6 +333,13 @@ export default function ProfilePage() {
           </div>
         </div>
       </main>
+      
+      {/* Toast Notification */}
+      {toastMsg && (
+        <div style={{ position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)', background: '#10B981', color: '#091530', padding: '12px 24px', borderRadius: '8px', zIndex: 1000, fontWeight: 'bold' }}>
+          {toastMsg}
+        </div>
+      )}
     </AppLayout>
   );
 }
@@ -335,7 +348,7 @@ export default function ProfilePage() {
    SUB-TAB COMPONENTS
 ═══════════════════════════════════════════ */
 
-function OverviewTab({ vehicles, revokeVehicle, prefMode }) {
+function OverviewTab({ vehicles, revokeVehicle, prefMode, showToast }) {
   return (
     <>
       {/* Auth cards */}
@@ -368,15 +381,15 @@ function OverviewTab({ vehicles, revokeVehicle, prefMode }) {
 
       {/* Action Strip */}
       <div className="action-strip">
-        <div className="action-tile" role="button" tabIndex={0} onClick={() => alert('Changing preferred mode…')} onKeyDown={e => e.key === 'Enter' && alert('Changing preferred mode…')}>
+        <div className="action-tile" role="button" tabIndex={0} onClick={() => showToast('Changing preferred mode…')} onKeyDown={e => e.key === 'Enter' && showToast('Changing preferred mode…')}>
           <div className="at-header"><span>Preferred Mode</span><Train size={16} aria-hidden="true" /></div>
           <div className="at-value">{prefMode}</div>
         </div>
-        <div className="action-tile" role="button" tabIndex={0} onClick={() => alert('Updating accessibility settings…')} onKeyDown={e => e.key === 'Enter' && alert('Updating accessibility…')}>
+        <div className="action-tile" role="button" tabIndex={0} onClick={() => showToast('Updating accessibility settings…')} onKeyDown={e => e.key === 'Enter' && showToast('Updating accessibility…')}>
           <div className="at-header"><span>Accessibility</span><AlertCircle size={16} aria-hidden="true" /></div>
           <div className="at-value">None</div>
         </div>
-        <div className="action-tile" role="button" tabIndex={0} onClick={() => alert('Alerts are enabled.')} onKeyDown={e => e.key === 'Enter' && alert('Alerts enabled.')}>
+        <div className="action-tile" role="button" tabIndex={0} onClick={() => showToast('Alerts are enabled.')} onKeyDown={e => e.key === 'Enter' && showToast('Alerts enabled.')}>
           <div className="at-header"><span>Alerts</span><Bell size={16} aria-hidden="true" /></div>
           <div className="at-value">Enabled</div>
         </div>
@@ -385,7 +398,7 @@ function OverviewTab({ vehicles, revokeVehicle, prefMode }) {
   );
 }
 
-function IdentityTab() {
+function IdentityTab({ showToast }) {
   const [biometricActive, setBiometricActive] = useState(true);
   return (
     <div className="tab-section">
@@ -433,7 +446,7 @@ function IdentityTab() {
   );
 }
 
-function VehicleTab({ vehicles, revokeVehicle }) {
+function VehicleTab({ vehicles, revokeVehicle, showToast }) {
   return (
     <div className="tab-section">
       <div className="section-title">Personal Vehicle &amp; Pod Access</div>
@@ -456,7 +469,7 @@ function VehicleTab({ vehicles, revokeVehicle }) {
             <div className="vc-right">
               {v.active && (
                 <>
-                  <div className="vc-seat" role="button" tabIndex={0} onClick={() => alert(`Configuring ${v.seat}…`)} onKeyDown={e => e.key === 'Enter' && alert(`Configuring ${v.seat}…`)}>
+                  <div className="vc-seat" role="button" tabIndex={0} onClick={() => showToast(`Configuring ${v.seat}…`)} onKeyDown={e => e.key === 'Enter' && showToast(`Configuring ${v.seat}…`)}>
                     {v.seat} <ChevronDown size={14} aria-hidden="true" />
                   </div>
                   <button
@@ -533,7 +546,7 @@ function PreferencesTab({ prefs, setPrefs, prefMode, setPrefMode }) {
   );
 }
 
-function SettingsTab() {
+function SettingsTab({ showToast }) {
   return (
     <div className="tab-section">
       <div className="section-title">Account Settings</div>
@@ -550,7 +563,7 @@ function SettingsTab() {
             key={label}
             type="button"
             className="settings-row"
-            onClick={() => alert(`Opening: ${label}`)}
+            onClick={() => showToast(`Opening: ${label}`)}
             aria-label={label}
           >
             <div className="settings-icon" aria-hidden="true">{icon}</div>
@@ -564,7 +577,7 @@ function SettingsTab() {
       </div>
       <div className="settings-danger-zone">
         <div className="section-title" style={{ color: '#F87171' }}>Danger Zone</div>
-        <button type="button" className="danger-btn" onClick={() => alert('This would delete your account.')}>
+        <button type="button" className="danger-btn" onClick={() => showToast('This would delete your account.')}>
           Delete Account
         </button>
       </div>

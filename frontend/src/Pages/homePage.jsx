@@ -20,7 +20,25 @@ import {
   Accessibility, Check, Plus
 } from 'lucide-react';
 import AppLayout from '../components/user/AppLayout';
+import DateTimePicker from '../components/user/DateTimePicker';
 import './HomePage.css';
+
+/* ── Date helpers ── */
+const pad2 = (n) => String(n).padStart(2, '0');
+const getTodayStr = () => {
+  const t = new Date();
+  return `${t.getFullYear()}-${pad2(t.getMonth() + 1)}-${pad2(t.getDate())}`;
+};
+const formatDateLabel = (dateStr) => {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const today = getTodayStr();
+  const tmr = new Date(Date.now() + 86400000);
+  const tomorrow = `${tmr.getFullYear()}-${pad2(tmr.getMonth() + 1)}-${pad2(tmr.getDate())}`;
+  if (dateStr === today) return 'Today';
+  if (dateStr === tomorrow) return 'Tomorrow';
+  return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
 
 /* ─── Mock recent journeys ─── */
 const RECENT_JOURNEYS = [
@@ -42,6 +60,8 @@ export default function HomePage() {
   const [origin, setOrigin]                   = useState('Current Location');
   const [destination, setDestination]         = useState('');
   const [arrivalTime, setArrivalTime]         = useState('08:00');
+  const [arrivalDate, setArrivalDate]         = useState(getTodayStr());
+  const [showDateTime, setShowDateTime]       = useState(false);
   const [accessPrefs, setAccessPrefs]         = useState([]);
   const [isSimpleMode, setIsSimpleMode]       = useState(false);
   const [validationMsg, setValidationMsg]     = useState('');
@@ -52,6 +72,7 @@ export default function HomePage() {
 
   const notifRef   = useRef(null);
   const profileRef = useRef(null);
+  const dateTimeRef = useRef(null);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -60,6 +81,7 @@ export default function HomePage() {
     const handler = (e) => {
       if (notifRef.current   && !notifRef.current.contains(e.target))   setShowNotifs(false);
       if (profileRef.current && !profileRef.current.contains(e.target)) setShowProfile(false);
+      if (dateTimeRef.current && !dateTimeRef.current.contains(e.target)) setShowDateTime(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
@@ -80,7 +102,7 @@ export default function HomePage() {
     
     setValidationMsg('');
     navigate('/journey', {
-      state: { destination, arrivalTime, origin, accessPrefs, activeTransport }
+      state: { destination, arrivalTime, arrivalDate, origin, accessPrefs, activeTransport }
     });
   };
 
@@ -92,7 +114,7 @@ export default function HomePage() {
 
   const openJourney = (dest) => {
     navigate('/journey', {
-      state: { destination: dest, arrivalTime, origin, accessPrefs, activeTransport }
+      state: { destination: dest, arrivalTime, arrivalDate, origin, accessPrefs, activeTransport }
     });
   };
 
@@ -299,28 +321,34 @@ export default function HomePage() {
 
             {/* Search actions row */}
             <div className="search-actions">
-              <button
-                type="button"
-                className="arrival-btn"
-                aria-label="Set arrival time"
-              >
-                <div className="arrival-info">
-                  <Calendar aria-hidden="true" />
-                  <div className="arrival-text">
-                    <small>Arrival by</small>
-                    <strong>
-                      <input
-                        type="time"
-                        value={arrivalTime}
-                        onChange={(e) => setArrivalTime(e.target.value)}
-                        className="time-input"
-                        aria-label="Arrival time"
-                      />
-                    </strong>
+              <div className="arrival-wrapper" ref={dateTimeRef}>
+                <button
+                  type="button"
+                  className={`arrival-btn ${showDateTime ? 'open' : ''}`}
+                  onClick={() => setShowDateTime((p) => !p)}
+                  aria-expanded={showDateTime}
+                  aria-label="Set arrival date and time"
+                >
+                  <div className="arrival-info">
+                    <Calendar aria-hidden="true" />
+                    <div className="arrival-text">
+                      <small>Arrival by</small>
+                      <strong>{formatDateLabel(arrivalDate)}, {arrivalTime}</strong>
+                    </div>
                   </div>
-                </div>
-                <ChevronDown aria-hidden="true" />
-              </button>
+                  <ChevronDown aria-hidden="true" />
+                </button>
+
+                {showDateTime && (
+                  <DateTimePicker
+                    date={arrivalDate}
+                    time={arrivalTime}
+                    onDateChange={setArrivalDate}
+                    onTimeChange={setArrivalTime}
+                    onClose={() => setShowDateTime(false)}
+                  />
+                )}
+              </div>
 
               <button
                 type="button"
