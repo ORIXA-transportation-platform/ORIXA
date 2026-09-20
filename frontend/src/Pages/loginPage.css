@@ -25,6 +25,53 @@
   z-index: 1;
 }
 
+/* ── LOGO BRAND ── */
+.login-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Full logo.png wordmark (replaces circle icon + "ORIXA" text) */
+.login-brand-logo {
+  width: 190px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.45));
+}
+
+/* Clickable logo → landing page */
+.login-brand-link {
+  display: inline-flex;
+  text-decoration: none;
+  border-radius: 12px;
+  transition: transform 0.25s ease;
+}
+
+.login-brand-link:hover { transform: translateY(-2px); }
+
+.login-brand-link:focus-visible {
+  outline: 2px solid rgba(34, 211, 238, 0.7);
+  outline-offset: 6px;
+}
+
+/* Mobile responsive tweaks */
+@media (max-width: 640px) {
+  .login-card {
+    padding: 1.5rem 1rem;
+    max-width: 90%;
+  }
+  .login-brand {
+    margin-bottom: 1rem;
+  }
+  .login-brand-logo {
+    width: 150px;
+  }
+}
+
 /* ── CARD ── */
 .login-card {
   position: relative;
@@ -50,27 +97,6 @@
   right: 10%;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(180, 220, 255, 0.6), transparent);
-}
-
-.login-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 1rem;
-}
-
-.login-brand-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  box-shadow: 0 0 16px rgba(34, 211, 238, 0.5);
-}
-
-.login-brand span {
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 1.05rem;
-  letter-spacing: 0.15em;
 }
 
 .login-card h1 {

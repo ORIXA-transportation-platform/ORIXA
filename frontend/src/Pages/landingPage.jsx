@@ -11,7 +11,8 @@ import { useNavigate } from 'react-router-dom';
 import {
   Brain, ScanFace, TrainFront,
   ArrowRight, ChevronDown, Shield, Zap, Globe,
-  MapPin, Clock, Users, Star, X, Menu
+  MapPin, Clock, Users, Star, X, Menu,
+  Accessibility, Navigation, Volume2, LifeBuoy
 } from 'lucide-react';
 import './LandingPage.css';
 
@@ -32,12 +33,11 @@ function useCountUp(target, duration = 2000, start = false) {
   return count;
 }
 
-/* ── Stats data ── */
-const STATS = [
-  { label: 'Cities Connected', value: 48, suffix: '+', icon: Globe },
-  { label: 'Daily Commuters', value: 2400000, suffix: '+', icon: Users },
-  { label: 'Routes Optimized', value: 99, suffix: '%', icon: Zap },
-  { label: 'User Satisfaction', value: 4.9, suffix: '/5', icon: Star, decimal: true },
+const ACCESSIBILITY = [
+  { label: '100% Step-Free', desc: 'Ramp & elevator routing', icon: Accessibility },
+  { label: 'Live Lift Status', desc: 'Real-time out-of-order alerts', icon: Navigation },
+  { label: 'Audio & Haptic', desc: 'Voice navigation & arrival cues', icon: Volume2 },
+  { label: '1-Tap Escort', desc: 'On-demand station assistance', icon: LifeBuoy },
 ];
 
 /* ── Features data ── */
@@ -180,8 +180,8 @@ export default function LandingPage() {
               <span className="lp-divider" />
               <span className="lp-status-text">City network operational</span>
             </div>
-            <button className="lp-btn-ghost" onClick={() => navigate('/home')}>Log In</button>
-            <button className="lp-btn-primary" onClick={() => navigate('/home')}>Get Started</button>
+            <button className="lp-btn-ghost" onClick={() => navigate('/login')}>Log In</button>
+            <button className="lp-btn-primary" onClick={() => navigate('/signup')}>Get Started</button>
             {/* Mobile menu toggle */}
             <button className="lp-menu-btn" onClick={() => setMenuOpen(o => !o)} aria-label="Toggle menu">
               {menuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -196,8 +196,8 @@ export default function LandingPage() {
               <a key={link} href={`#${link.toLowerCase().replace(' ', '-')}`} className="lp-mobile-link" onClick={() => setMenuOpen(false)}>{link}</a>
             ))}
             <div className="lp-mobile-actions">
-              <button className="lp-btn-ghost w-full" onClick={() => navigate('/home')}>Log In</button>
-              <button className="lp-btn-primary w-full" onClick={() => navigate('/home')}>Get Started</button>
+              <button className="lp-btn-ghost w-full" onClick={() => navigate('/login')}>Log In</button>
+              <button className="lp-btn-primary w-full" onClick={() => navigate('/signup')}>Get Started</button>
             </div>
           </div>
         )}
@@ -226,7 +226,7 @@ export default function LandingPage() {
                 Sign up to begin your personalized, AI-powered integrated transport experience across the city.
               </p>
               <div className="lp-hero-actions">
-                <button className="lp-btn-unlock" onClick={() => navigate('/home')}>
+                <button className="lp-btn-unlock" onClick={() => navigate('/login')}>
                   Unlock Your Future
                   <ArrowRight size={18} />
                 </button>
@@ -272,11 +272,25 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── STATS SECTION ── */}
-      <section className="lp-stats-section" ref={statsRef} id="technology">
-        {STATS.map((s) => (
-          <StatCard key={s.label} stat={s} active={statsVisible} />
-        ))}
+      {/* ── ACCESSIBILITY SECTION ── */}
+      <section className="lp-access-banner">
+        <div className="lp-access-content">
+          <div className="lp-access-header">
+            <h2 className="lp-section-title" style={{ color: '#fff', textShadow: '0 0 20px rgba(0, 240, 255, 0.5)' }}>Mobility for Everyone</h2>
+            <p className="lp-feature-desc" style={{ color: '#d5e2f2' }}>Our platform ensures seamless travel regardless of ability, integrating accessibility at every step.</p>
+          </div>
+          <div className="lp-access-grid">
+            {ACCESSIBILITY.map((item) => (
+              <div key={item.label} className="lp-access-card">
+                <div className="lp-access-icon">
+                  <item.icon size={28} />
+                </div>
+                <h3>{item.label}</h3>
+                <p>{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* ── FEATURES SECTION ── */}
@@ -315,11 +329,11 @@ export default function LandingPage() {
           <h2 className="lp-cta-title">Ready to transform your commute?</h2>
           <p className="lp-cta-desc">Join 2.4 million commuters who've already unlocked the future of urban transport.</p>
           <div className="lp-cta-actions">
-            <button className="lp-btn-unlock large" onClick={() => navigate('/home')}>
+            <button className="lp-btn-unlock large" onClick={() => navigate('/signup')}>
               Start Your Journey
               <ArrowRight size={20} />
             </button>
-            <button className="lp-btn-ghost large" onClick={() => navigate('/home')}>
+            <button className="lp-btn-ghost large" onClick={() => navigate('/login')}>
               Log In Instead
             </button>
           </div>
@@ -370,7 +384,7 @@ export default function LandingPage() {
                 <span className="lp-divider" />
                 <span className="lp-modal-mode">Mode: Direct Interface</span>
               </div>
-              <button className="lp-btn-unlock" onClick={() => { setShowMindLink(false); navigate('/home'); }}>
+              <button className="lp-btn-unlock" onClick={() => { setShowMindLink(false); navigate('/login'); }}>
                 Connect Now <ArrowRight size={16} />
               </button>
             </div>
@@ -381,22 +395,3 @@ export default function LandingPage() {
   );
 }
 
-/* ── Stat Card subcomponent ── */
-function StatCard({ stat, active }) {
-  const count = useCountUp(
-    stat.decimal ? Math.round(stat.value * 10) : stat.value,
-    2000,
-    active
-  );
-  const display = stat.decimal ? (count / 10).toFixed(1) : count.toLocaleString();
-
-  return (
-    <div className="lp-stat-card">
-      <div className="lp-stat-icon"><stat.icon size={22} /></div>
-      <div className="lp-stat-value">
-        {display}{stat.suffix}
-      </div>
-      <div className="lp-stat-label">{stat.label}</div>
-    </div>
-  );
-}

@@ -11,9 +11,9 @@
  * @file src/components/user/AppLayout.jsx
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ChevronRight, Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, ArrowRight } from 'lucide-react';
 
 /* ───────────── NAV CONFIG ───────────── */
 const NAV_ITEMS = [
@@ -65,9 +65,14 @@ const NAV_ITEMS = [
 
 const SidebarContent = ({ onLinkClick, pathname }) => (
   <>
-    <div className="brand">
+    <Link
+      to="/"
+      className="brand"
+      aria-label="ORIXA – go to landing page"
+      title="ORIXA – Home"
+    >
       <img src="/images/logo.png" alt="ORIXA Logo" className="brand-icon-img" />
-    </div>
+    </Link>
     <nav className="nav-menu" aria-label="Main navigation">
       {NAV_ITEMS.map(({ label, path, icon }) => (
         <Link

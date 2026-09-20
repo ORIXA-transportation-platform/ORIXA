@@ -68,6 +68,18 @@ body {
     color: #FFF;
     margin-bottom: 10px;
     padding-left: 0;
+    /* Clickable brand → landing page */
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: transform 0.25s ease;
+}
+
+.brand:hover { transform: translateY(-2px); }
+
+.brand:focus-visible {
+    outline: 2px solid rgba(37, 217, 255, 0.7);
+    outline-offset: 6px;
 }
 
 .brand-icon-img {

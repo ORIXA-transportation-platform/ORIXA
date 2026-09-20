@@ -4,8 +4,8 @@ import { User, KeyRound, Eye, EyeOff, ScanFace, Mic, HeartPulse } from "lucide-r
 import "./loginPage.css";
 
 function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin@orixa.network");
+  const [password, setPassword] = useState("admin123");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -21,15 +21,21 @@ function LoginPage() {
 
   return (
     <div className="login-page">
-      {/* Full-bleed background */}
+
       <img src="/images/city-dusk.png" alt="" className="login-bg-image" />
       <div className="login-bg-overlay" />
 
       {/* Centered card */}
       <div className="login-card">
         <div className="login-brand">
-          <img src="/images/logo.png" alt="ORIXA Logo" className="login-brand-icon" />
-          <span>ORIXA</span>
+          <Link
+            to="/"
+            className="login-brand-link"
+            aria-label="ORIXA – go to landing page"
+            title="ORIXA – Home"
+          >
+            <img src="/images/logo.png" alt="ORIXA" className="login-brand-logo" />
+          </Link>
         </div>
 
         <h1>Welcome back to ORIXA</h1>
