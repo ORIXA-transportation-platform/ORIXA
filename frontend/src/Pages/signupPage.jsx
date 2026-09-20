@@ -30,12 +30,11 @@ function SignupPage() {
         {/* Brand logo — links back to the landing page */}
         <Link
           to="/"
-          className="signup-brand"
+          className="signup-brand-link"
           aria-label="ORIXA – go to landing page"
           title="ORIXA – Home"
         >
-          <img src="/images/logo.png" alt="ORIXA Logo" className="signup-brand-icon" />
-          <span>ORIXA</span>
+          <img src="/images/logo.png" alt="ORIXA Logo" className="signup-main-logo" />
         </Link>
         <form onSubmit={handleSubmit}>
           <h2>Create Account</h2>

@@ -2,10 +2,10 @@
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   height: 100vh;
   overflow: hidden;
-  padding-right: 8%;
+  padding: 0 1rem;
 }
 
 .signup-bg-image {
@@ -26,40 +26,32 @@
 }
 
 /* ── LOGO BRAND ── */
-.signup-brand {
+.signup-brand-link {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
   justify-content: center;
   margin-bottom: 1.5rem;
   position: relative;
   z-index: 2;
-  /* Clickable brand → landing page */
   text-decoration: none;
   cursor: pointer;
   border-radius: 12px;
   transition: transform 0.25s ease;
 }
 
-.signup-brand:hover { transform: translateY(-2px); }
+.signup-brand-link:hover { transform: translateY(-2px); }
 
-.signup-brand:focus-visible {
+.signup-brand-link:focus-visible {
   outline: 2px solid rgba(34, 211, 238, 0.7);
   outline-offset: 6px;
 }
 
-.signup-brand-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 8px;
-  box-shadow: 0 0 12px rgba(34,211,238,0.6);
-}
-
-.signup-brand span {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 0.1em;
+/* Full logo.png wordmark */
+.signup-main-logo {
+  width: 190px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.45));
 }
 
 /* ── CARD ── */
@@ -172,10 +164,10 @@
     padding: 1.5rem 1rem;
     max-width: 90%;
   }
-  .signup-brand {
+  .signup-brand-link {
     margin-bottom: 1rem;
   }
-  .signup-brand span {
-    font-size: 1rem;
+  .signup-main-logo {
+    width: 150px;
   }
 }
