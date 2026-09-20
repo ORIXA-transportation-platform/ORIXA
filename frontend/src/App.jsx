@@ -7,9 +7,6 @@
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-// Shared Layout
-import AppLayout from './components/user/AppLayout';
-
 // Pages
 import HomePage    from './Pages/homePage';
 import JourneyPage from './Pages/journeyPage';
@@ -17,13 +14,14 @@ import LiveMapPage from './Pages/liveMapPage';
 import ProfilePage from './Pages/profilePage';
 import LoginPage    from './Pages/loginPage';
 import SignupPage   from './Pages/signupPage';
+import LandingPage from './Pages/LandingPage';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Redirect root to /home */}
-        <Route path="/" element={<Navigate to="/home" replace />} />
+        {/* Landing Page */}
+        <Route path="/" element={<LandingPage />} />
 
         {/* Auth pages — no sidebar */}
         <Route path="/login"  element={<LoginPage />} />

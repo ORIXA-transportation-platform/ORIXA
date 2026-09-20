@@ -61,6 +61,45 @@ const NAV_ITEMS = [
   },
 ];
 
+
+
+const SidebarContent = ({ onLinkClick, pathname }) => (
+  <>
+    <div className="brand">
+      <img src="/images/logo.png" alt="ORIXA Logo" className="brand-icon-img" />
+    </div>
+    <nav className="nav-menu" aria-label="Main navigation">
+      {NAV_ITEMS.map(({ label, path, icon }) => (
+        <Link
+          key={path}
+          to={path}
+          aria-label={label}
+          className={`nav-item ${pathname === path || (path !== '/home' && pathname.startsWith(path)) ? 'active' : ''}`}
+          onClick={onLinkClick}
+        >
+          {icon}
+          <span>{label}</span>
+        </Link>
+      ))}
+    </nav>
+    <div
+      className="ai-assistant-mini"
+      role="button"
+      tabIndex={0}
+      aria-label="Open AI Travel Assistant"
+      onClick={() => { if (onLinkClick) onLinkClick(); }}
+      onKeyDown={(e) => { if (e.key === 'Enter') { if (onLinkClick) onLinkClick(); } }}
+    >
+      <img src="/images/ai_robot.png" alt="AI Robot" style={{ objectFit: 'cover' }} />
+      <div className="ai-mini-text">
+        <strong>AI Travel Assistant</strong>
+        <small>Always here to help</small>
+      </div>
+      <ArrowRight size={14} className="ai-mini-arrow" />
+    </div>
+  </>
+);
+
 export default function AppLayout({ children }) {
   const { pathname } = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -87,43 +126,6 @@ export default function AppLayout({ children }) {
     return () => document.removeEventListener('keydown', h);
   }, []);
 
-  const SidebarContent = ({ onLinkClick }) => (
-    <>
-      <div className="brand">
-        <img src="/images/logo.png" alt="ORIXA Logo" className="brand-icon-img" />
-      </div>
-      <nav className="nav-menu" aria-label="Main navigation">
-        {NAV_ITEMS.map(({ label, path, icon }) => (
-          <Link
-            key={path}
-            to={path}
-            aria-label={label}
-            className={`nav-item ${pathname === path || (path !== '/home' && pathname.startsWith(path)) ? 'active' : ''}`}
-            onClick={onLinkClick}
-          >
-            {icon}
-            <span>{label}</span>
-          </Link>
-        ))}
-      </nav>
-      <div
-        className="ai-assistant-mini"
-        role="button"
-        tabIndex={0}
-        aria-label="Open AI Travel Assistant"
-        onClick={() => { if (onLinkClick) onLinkClick(); }}
-        onKeyDown={(e) => { if (e.key === 'Enter') { if (onLinkClick) onLinkClick(); } }}
-      >
-        <img src="/images/ai_robot.png" alt="AI Robot" style={{ objectFit: 'cover' }} />
-        <div className="ai-mini-text">
-          <strong>AI Travel Assistant</strong>
-          <small>Always here to help</small>
-        </div>
-        <ArrowRight size={14} className="ai-mini-arrow" />
-      </div>
-    </>
-  );
-
   return (
     <div className="app-container">
       {/* ── MOBILE OVERLAY BACKDROP ── */}
@@ -135,7 +137,7 @@ export default function AppLayout({ children }) {
 
       {/* ── DESKTOP / TABLET SIDEBAR ── */}
       <aside className={`sidebar ${isMenuOpen ? 'mobile-open' : ''}`} aria-label="Primary navigation">
-        <SidebarContent onLinkClick={null} />
+        <SidebarContent onLinkClick={null} pathname={pathname} />
       </aside>
 
       {/* ── MOBILE HAMBURGER BUTTON (fixed top-left) ── */}
