@@ -1258,6 +1258,7 @@ body {
         align-items: flex-start;
         justify-content: space-between;
         margin-bottom: 20px;
+        gap: 12px;
     }
     
     .welcome-block {
@@ -1299,6 +1300,10 @@ body {
         min-width: 0;
         max-width: 100%;
         width: 100%;
+    }
+    .plan-btn {
+        flex: none;
+        padding: 0 20px;
     }
 
     /* Date/time picker stacks vertically */
