@@ -416,7 +416,13 @@ function IdentityTab({ showToast }) {
             <button
               type="button"
               className="tab-action-btn"
-              onClick={() => setBiometricActive(p => !p)}
+              onClick={() => {
+                setBiometricActive(p => {
+                  const next = !p;
+                  if (showToast) showToast(next ? 'Biometric auth enabled' : 'Biometric auth disabled');
+                  return next;
+                });
+              }}
               style={{ marginTop: 8 }}
             >
               {biometricActive ? 'Disable' : 'Enable'}

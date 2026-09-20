@@ -122,7 +122,10 @@ export default function AppLayout({ children }) {
   }, [isMenuOpen]);
 
   /* Close on route change */
-  useEffect(() => { setIsMenuOpen(false); }, [pathname]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMenuOpen(false);
+  }, [pathname]);
 
   /* Close on Escape */
   useEffect(() => {

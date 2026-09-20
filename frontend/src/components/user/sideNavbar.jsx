@@ -51,7 +51,7 @@ function LogoMark({ showLabel = false, animate = false }) {
 }
 
 /* ───────────── NAV ITEM ───────────── */
-function NavItem({ item, onClick, showLabel = false, index = 0 }) {
+function NavItem({ item, onClick, showLabel = false }) {
   const Icon = item.icon;
   const [hovered, setHovered] = useState(false);
 
