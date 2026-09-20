@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { User, KeyRound, Eye, EyeOff, ScanFace, Mic, HeartPulse } from "lucide-react";
+import { User, Key, Eye, EyeOff, Smartphone, Mic, Heart } from "lucide-react";
 import "./loginPage.css";
 
 function LoginPage() {
@@ -27,16 +27,14 @@ function LoginPage() {
 
       {/* Centered card */}
       <div className="login-card">
-        <div className="login-brand">
-          <Link
-            to="/"
-            className="login-brand-link"
-            aria-label="ORIXA – go to landing page"
-            title="ORIXA – Home"
-          >
-            <img src="/images/logo.png" alt="ORIXA" className="login-brand-logo" />
-          </Link>
-        </div>
+        <Link
+          to="/"
+          className="login-brand-link"
+          aria-label="ORIXA – go to landing page"
+          title="ORIXA – Home"
+        >
+          <img src="/images/logo.png" alt="ORIXA" className="login-main-logo" />
+        </Link>
 
         <h1>Welcome back to ORIXA</h1>
         <p className="login-subtitle">Sign in to continue your smart journey.</p>
@@ -57,7 +55,7 @@ function LoginPage() {
 
           <label htmlFor="password">Password</label>
           <div className="input-wrapper">
-            <KeyRound size={17} className="input-icon" />
+            <Key size={17} className="input-icon" />
             <input
               type={showPassword ? "text" : "password"}
               id="password"
@@ -89,7 +87,7 @@ function LoginPage() {
           <p className="biometric-title">Secure Biometric Login</p>
           <div className="biometric-options">
             <button type="button" className="biometric-btn">
-              <ScanFace size={20} />
+              <Smartphone size={20} />
               <span>Face ID</span>
             </button>
             <button type="button" className="biometric-btn">
@@ -97,7 +95,7 @@ function LoginPage() {
               <span>Voice ID</span>
             </button>
             <button type="button" className="biometric-btn">
-              <HeartPulse size={20} />
+              <Heart size={20} />
               <span>Heartbeat</span>
             </button>
           </div>

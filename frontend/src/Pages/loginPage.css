@@ -2,10 +2,10 @@
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   height: 100vh;
   overflow: hidden;
-  padding-left: 8%;
+  padding: 0 1rem;
 }
 
 .login-bg-image {
@@ -36,7 +36,7 @@
 }
 
 /* Full logo.png wordmark (replaces circle icon + "ORIXA" text) */
-.login-brand-logo {
+.login-main-logo {
   width: 190px;
   height: auto;
   display: block;
@@ -67,7 +67,7 @@
   .login-brand {
     margin-bottom: 1rem;
   }
-  .login-brand-logo {
+  .login-main-logo {
     width: 150px;
   }
 }
