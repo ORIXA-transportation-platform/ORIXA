@@ -14,7 +14,7 @@ import LiveMapPage from './Pages/liveMapPage';
 import ProfilePage from './Pages/profilePage';
 import LoginPage    from './Pages/loginPage';
 import SignupPage   from './Pages/signupPage';
-import LandingPage from './Pages/LandingPage';
+import LandingPage from './Pages/landingPage';
 
 export default function App() {
   return (
