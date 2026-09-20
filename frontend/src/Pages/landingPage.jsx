@@ -10,28 +10,11 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Brain, ScanFace, TrainFront,
-  ArrowRight, ChevronDown, Shield, Zap, Globe,
-  MapPin, Clock, Users, Star, X, Menu,
+  ArrowRight, ChevronDown, Shield, Zap,
+  MapPin, Clock, Users, X, Menu,
   Accessibility, Navigation, Volume2, LifeBuoy
 } from 'lucide-react';
 import './LandingPage.css';
-
-/* ── Animated stat counter hook ── */
-function useCountUp(target, duration = 2000, start = false) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    if (!start) return;
-    let startTime = null;
-    const step = (ts) => {
-      if (!startTime) startTime = ts;
-      const progress = Math.min((ts - startTime) / duration, 1);
-      setCount(Math.floor(progress * target));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [start, target, duration]);
-  return count;
-}
 
 const ACCESSIBILITY = [
   { label: '100% Step-Free', desc: 'Ramp & elevator routing', icon: Accessibility },
@@ -106,23 +89,11 @@ const STATIC_PARTICLES = Array.from({ length: 20 }).map(() => ({
 export default function LandingPage() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [statsVisible, setStatsVisible] = useState(false);
   const [activeFeature, setActiveFeature] = useState(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [tickerIdx, setTickerIdx] = useState(0);
   const [showMindLink, setShowMindLink] = useState(false);
-  const statsRef = useRef(null);
   const heroRef = useRef(null);
-
-  /* Stats intersection observer */
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setStatsVisible(true); },
-      { threshold: 0.3 }
-    );
-    if (statsRef.current) obs.observe(statsRef.current);
-    return () => obs.disconnect();
-  }, []);
 
   /* Ticker rotation */
   useEffect(() => {
