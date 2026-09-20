@@ -625,6 +625,7 @@
     .map-header {
         flex-direction: column;
         gap: 10px;
+        padding-left: 52px; /* Avoid hamburger menu */
     }
     .hud-top-right {
         width: 100%;

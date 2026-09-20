@@ -592,6 +592,8 @@
 
     .auth-grid { grid-template-columns: 1fr 1fr; }
     .action-strip { grid-template-columns: repeat(3, 1fr); }
+    
+    .profile-header { padding-left: 52px; /* Avoid hamburger menu */ }
 }
 
 /* =========================================================

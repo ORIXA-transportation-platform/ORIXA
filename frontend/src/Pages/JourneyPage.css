@@ -532,7 +532,10 @@
         display: none;
     }
 
-    .journey-header { margin-bottom: 24px; }
+    .journey-header { 
+        margin-bottom: 24px; 
+        padding-left: 52px; /* Avoid hamburger menu */
+    }
 }
 
 /* =========================================================
