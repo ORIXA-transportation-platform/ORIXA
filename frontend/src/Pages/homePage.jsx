@@ -106,6 +106,13 @@ export default function HomePage() {
     });
   };
 
+  const handleSignOut = () => {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userEmail');
+    setShowProfile(false);
+    navigate('/login');
+  };
+
   const toggleAccessPref = (pref) => {
     setAccessPrefs(prev => 
       prev.includes(pref) ? prev.filter(p => p !== pref) : [...prev, pref]
@@ -236,7 +243,7 @@ export default function HomePage() {
                         <Settings size={15} /> Settings
                       </Link>
                       <div className="pd-divider" />
-                      <button type="button" className="pd-item pd-logout" role="menuitem" onClick={() => { setShowProfile(false); navigate('/home'); }}>
+                      <button type="button" className="pd-item pd-logout" role="menuitem" onClick={handleSignOut}>
                         <LogOut size={15} /> Sign Out
                       </button>
                     </div>
